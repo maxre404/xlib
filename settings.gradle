@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "xlib"
 include ':app'
 include ':xlib'
+include ':MinaLib'
