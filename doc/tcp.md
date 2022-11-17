@@ -1,4 +1,8 @@
+
+本开源库用的socket底层是mina 其实就是对mina 进行封装  解决断包沾包问题 需要和 socket 服务配合一起使用
+
 # 使用socket 样式代码
+
     thread {
             MinaConnector().connect("",8080,object : MinaIOListener {
                 override fun onConnect(session: Any?) {
