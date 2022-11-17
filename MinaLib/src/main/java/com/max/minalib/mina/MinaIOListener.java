@@ -9,6 +9,6 @@ public interface MinaIOListener {
     void onReConnect(Object session);
 
 
-    void onmessageReceived(Object session, Object message);
+    void onmessageReceived(Object session, byte[] byteMessage);
 
 }

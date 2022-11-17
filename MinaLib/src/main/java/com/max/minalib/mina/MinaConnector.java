@@ -65,7 +65,7 @@ public class MinaConnector {
                 byte[] utf_8 = BaseNetTool.getUTF_8(ioBuffer, tt, 1);
                 if ("|".equals(new String(utf_8))) {
                     tt += 1;
-                    int length = BaseNetTool.Getint(ioBuffer, tt);
+                    int length = BaseNetTool.getInt(ioBuffer, tt);
                     tt += 4;
                     byte[] reciveData = BaseNetTool.getbyte(ioBuffer, tt, length);
                     tt += length;
@@ -74,7 +74,7 @@ public class MinaConnector {
                         reciveData[k] ^= 255;
                     }
                     int position = 0;
-                    int cmd = BaseNetTool.Getint(reciveData, position);
+                    int cmd = BaseNetTool.getInt(reciveData, position);
                     ioListener.onmessageReceived(ioSession,reciveData);
                 }
             }

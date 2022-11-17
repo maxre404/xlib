@@ -60,7 +60,7 @@ public class BaseNetTool {
 		// compress  -------------- 1  没锟斤拷
 		//-----------------------------3
 		int pp=0;
-		int cmd = BaseNetTool.Getint(buf, pp);
+		int cmd = BaseNetTool.getInt(buf, pp);
 		TcpLogUtil.log(">>>>>>>>>>>>>>>>发送出去的cmd>>>>>>>>>>>>>>>>>>>>>"+cmd);
 		for(int j=0;j<buf.length;j++){//加密
 			buf[j] ^= 255;
@@ -320,7 +320,7 @@ public class BaseNetTool {
 		}
     	
     }
-    public static int Getint(byte[] buff,int pos){
+    public static int getInt(byte[] buff, int pos){
     	byte [] jkl={buff[pos],buff[pos+1],buff[pos+2],buff[pos+3]};
     	int result = BaseNetTool.byte2int(jkl);
     	return result;

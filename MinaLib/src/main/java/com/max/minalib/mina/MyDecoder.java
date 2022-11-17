@@ -47,7 +47,7 @@ public class MyDecoder extends CumulativeProtocolDecoder {
 				TcpLogUtil.log("包头不对:以"+new String(utf_8)+"开始的");
 				return false;
 			}
-		       int length = BaseNetTool.Getint(b, posion);
+		       int length = BaseNetTool.getInt(b, posion);
 				in.reset();
 		      	 if (length>in.remaining()) {// 如果消息内容不够，则重置，相当于不读取 size
 		    	   TcpLogUtil.log("数据不够   数据包总长度:"+length+"当前收到的长度:"+in.remaining());
