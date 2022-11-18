@@ -12,6 +12,7 @@ import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator
 
 class LogFile {
 
+
     companion object {
         private var isInited = false
         private const val TAG = "xlib"
