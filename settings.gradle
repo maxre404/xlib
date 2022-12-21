@@ -16,3 +16,4 @@ rootProject.name = "xlib"
 include ':app'
 include ':xlib'
 include ':MinaLib'
+include ':uiframe'
