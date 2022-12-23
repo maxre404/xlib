@@ -25,6 +25,10 @@ class FirstFragment : Fragment() {
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding?.textView?.post {
+            _binding?.textView?.setText("this is TextView   GoodLucky  HAPPY BANK")
+            _binding?.textView?.setAdaptiveText("this is TextView   GoodLucky  HAPPY BANK")
+        }
         return binding.root
 
     }
