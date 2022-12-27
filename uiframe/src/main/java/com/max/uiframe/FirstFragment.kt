@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.max.uiframe.databinding.FragmentFirstBinding
 
 /**
@@ -36,8 +39,15 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val firbase = FirebaseAnalytics.getInstance(activity!!)
+        firbase.setUserId("99")
         binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+//            throw java.lang.NullPointerException("空指针异常")
+            var bundle = Bundle()
+            bundle.putString("id","jkl#####")
+            firbase.logEvent("click2222_event",bundle)
+            FirebaseCrashlytics.getInstance().recordException(java.lang.NullPointerException("9999999999999999992 哈哈"))
         }
     }
 
