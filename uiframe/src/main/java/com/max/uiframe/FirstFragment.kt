@@ -1,12 +1,14 @@
 package com.max.uiframe
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.drake.spannable.span.CenterImageSpan
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
@@ -31,6 +33,7 @@ class FirstFragment : Fragment() {
     var merchantId = "503"
     var exception = "空指针异常"
     var userId = "9999"
+    var str = "不良人1 telah dibatalkan  Manajemen perumahan"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +52,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val firbase = FirebaseAnalytics.getInstance(activity!!)
+        initSpan()
         firbase.setUserId("99")
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
@@ -71,6 +75,16 @@ class FirstFragment : Fragment() {
                 }
 
         }
+    }
+
+    private fun initSpan() {
+        var ss = SpannableStringBuilder("$str")
+//        val userRoleBackgroundSpan = CenterImageSpan(this, R.drawable.btn_live_admin)
+//                .setDrawableSize(-1)
+//                .setPaddingHorizontal(6.dp)
+//                .setPaddingVertical(2.dp)
+//                .setTextSize(10.dp)
+//                .setTextVisibility()
     }
 
     override fun onDestroyView() {
