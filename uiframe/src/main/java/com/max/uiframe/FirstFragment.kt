@@ -1,7 +1,11 @@
 package com.max.uiframe
 
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -33,7 +37,11 @@ class FirstFragment : Fragment() {
     var merchantId = "503"
     var exception = "空指针异常"
     var userId = "9999"
-    var str = "不良人1 telah dibatalkan  Manajemen perumahan"
+    var str = "不良人1 telah dibatalkan  Manajemen perumahan Manajemen perumahan"
+    var moderator = "Manajemen perumahan"
+//    var moderator = "Housing management"
+    private val whitColor = ForegroundColorSpan(Color.WHITE)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,16 +87,31 @@ class FirstFragment : Fragment() {
 
     private fun initSpan() {
         var ss = SpannableStringBuilder("$str")
-//        val userRoleBackgroundSpan = CenterImageSpan(this, R.drawable.btn_live_admin)
-//                .setDrawableSize(-1)
-//                .setPaddingHorizontal(6.dp)
-//                .setPaddingVertical(2.dp)
-//                .setTextSize(10.dp)
-//                .setTextVisibility()
+        val userRoleBackgroundSpan = CenterImageSpan(activity!!, R.drawable.btn_live_admin)
+                .setDrawableSize(-1)
+                .setPaddingHorizontal(14.dp)
+                .setPaddingVertical(2.dp)
+                .setTextSize(12.dp)
+                .setTextVisibility()
+        ss.setSpan(
+            whitColor,
+            ss.length - moderator.length,
+            ss.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        ss.setSpan(
+            userRoleBackgroundSpan,
+            ss.length - moderator.length,
+            ss.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.textviewFirst?.text = ss
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+    val Number.dp
+        get() = (this.toFloat() * Resources.getSystem().displayMetrics.density).toInt()
 }
