@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alibaba.android.arouter.launcher.ARouter
 import com.max.minalib.mina.MinaConnector
 import com.max.minalib.mina.MinaIOListener
 import com.max.minalib.mina.TcpMessage
@@ -37,7 +38,11 @@ class MainActivity : ComponentActivity() {
                         Greeting("Android")
                         Spacer(modifier = Modifier.height(10.dp))
                         Button(onClick = {
-                            connectSocket()
+                            ARouter.getInstance()
+                                .build("/tg/aod")
+                                .withString("key", "小猪佩奇身上纹，掌声送给社会人")
+                                .navigation(this@MainActivity);
+//                            connectSocket()
                         }) {
                             Text(text = "连接socket")
                         }
