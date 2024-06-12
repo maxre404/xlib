@@ -23,6 +23,13 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".NextActivity"
+
+            />
+        <activity android:name=".MultiProcessActivity"
+            android:process=":remote"
+            android:launchMode="singleTop"
+            />
     </application>
 
 </manifest>

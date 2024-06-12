@@ -1,5 +1,6 @@
 package com.max.uiframe
 
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
@@ -63,25 +64,7 @@ class FirstFragment : Fragment() {
         initSpan()
         firbase.setUserId("99")
         binding.buttonFirst.setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//            throw java.lang.NullPointerException("空指针异常")
-//            var bundle = Bundle()
-//            bundle.putString("id","j234567kl#####")
-//            bundle.putString("name","jok:${Random().nextInt(10000)}+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" +
-//                    "exception++++++++++++++++++++++++++++" +
-//                    "+++++++++++++++++++++jkljkljkljkljkljlk12323")
-//            bundle.putString("ttt","tg:${Random().nextInt(1000)}")
-//            firbase.logEvent("click2222_event",bundle)
-            var userLog = UserLog(merchantId="505",message = "++++++++++++++++++++++\nsadjfhjkdhsfkjhdsakjfhjkadsf\nfjaskdjflksdjfkl\n++++++++++++++++++++++123321")
-            db.collection(UserLog::class.java.simpleName)
-                .add(userLog)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}  tableName:${UserLog::class.java.simpleName}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
-
+            startActivity(Intent(activity, NextActivity::class.java))
         }
     }
 
