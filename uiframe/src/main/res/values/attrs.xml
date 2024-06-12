@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TreasureSnatchProgressBar">
+        <attr name="cursorWidth" format="dimension"/>
+        <attr name="cursorHeight" format="dimension"/>
+        <attr name="fingerWidth" format="dimension"/>
+        <attr name="fingerHeight" format="dimension"/>
+        <attr name="radius" format="dimension"/>
+    </declare-styleable>
+
+
+</resources>
