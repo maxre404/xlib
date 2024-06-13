@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.max.uiframe.widget.TreasureSnatchProgressBar
 
 class NextActivity:AppCompatActivity() {
     val launcher = MultiProcessActivityLauncher(this) { result ->
@@ -12,8 +13,21 @@ class NextActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_next)
+        var progressBar = findViewById<TreasureSnatchProgressBar>(R.id.progressBar)
+        var progress = 50.0
         findViewById<View>(R.id.btnStart).setOnClickListener {
-            launcher.launch()
+            progress++
+            progressBar.setCurrentAmount(progress)
+        }
+        findViewById<View>(R.id.btnMinus).setOnClickListener {
+            progress--
+            progressBar.setCurrentAmount(progress)
+        }
+        findViewById<View>(R.id.btnFailed).setOnClickListener {
+            progressBar.setFailed(true)
+        }
+        findViewById<View>(R.id.btnSuccess).setOnClickListener {
+            progressBar.setFailed(false)
         }
     }
 }

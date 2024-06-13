@@ -2,28 +2,67 @@ package com.max.uiframe.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.Size;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.max.uiframe.R;
 import com.max.uiframe.util.QMUIDisplayHelper;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class TreasureSnatchProgressBar extends View {
     private float progressBarHeight =0f;
     private float cursorHeight;
     private float cursorWidth;
+    private float cursorTextSize;
+    /*当前金额字体大小*/
+    private float currentAmountTextSize;
     private float radius = 0f;
+    private float failBlockRadius = 0f;
 
     private boolean isExpand = true;//是否是展开时的布局 如果为false就只有一个进度条
-    private Paint progressBgPaint = new Paint();//绘制进度条的底部
-    private double progress = 0;
-    private RectF progressBackGroundRectF;
+    private boolean isFailed = false;//是否失败
+    private final Paint progressBgPaint = new Paint();//绘制进度条的底部
+    private final Paint progressPaint = new Paint();//绘制进度条
+    private final Paint failBlockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);//绘制失败矩形
+    private final Paint failBlockStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);//绘制失败矩形描边
+    private final  Paint failBlockTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);//绘制失败矩形文字
+    private Size failBlockSize;//失败矩形大小 默认为 64dp*24dp
+
+    private Paint cursorFillPaint = new Paint();
+    private Paint cursorStrokePaint;
+
+    private Paint cursonTextPaint;
+    private Paint currentAmountPaint;
+    private double prizePool = 100;//奖池金额
+    private double currentAmount = 80;
+    private double cursorToProgressMargin = 0;//游标顶部到进度条顶部的距离
+    private int currentAmountMargin = 0;//当前金额到游标指示器的距离 目前设计图是4dp
+    private int cursorToTopMargin = 0;//游标到顶部距离
+    private final RectF progressBackGroundRectF = new RectF();
+    private final RectF progressRectF = new RectF();
+    private final RectF cursorRectF = new RectF();
+    private final RectF failBlockRectF = new RectF();
+    double progressRealWidth = 0;
+    double currentProgressWidth = 0;
+    private static final String TAG = "debug11";
+    private Bitmap indicatorBitmap;
+    int generalColor = Color.parseColor("#fffe2c55");
+    int progressFailedColor = Color.parseColor("#ffaeaeae");
 
     public TreasureSnatchProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -35,40 +74,202 @@ public class TreasureSnatchProgressBar extends View {
         init(context, attrs);
     }
     private void init(Context context, AttributeSet attrs) {
-        initPaint(context);
+        failBlockSize = new Size(QMUIDisplayHelper.dp2px(context,64),QMUIDisplayHelper.dp2px(context,24));
+        currentAmountMargin = QMUIDisplayHelper.dp2px(context,4);
+        failBlockRadius = QMUIDisplayHelper.dp2px(context,2);
+        Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_treasure_snatch_indicator, null);
+        indicatorBitmap = drawable != null ? ((BitmapDrawable) drawable).getBitmap() : null;
         initAttr(context, attrs);
-        progressBackGroundRectF = new RectF(0f,0f,getWidth(),cursorHeight);
+        initPaint(context);
     }
 
     private void initPaint(Context context) {
         progressBgPaint.setColor(Color.parseColor("#80000000"));
-        progressBgPaint.setAntiAlias(false);
+        progressBgPaint.setAntiAlias(true);
         progressBgPaint.setStyle(Paint.Style.FILL);
+
+        progressPaint.setColor(generalColor);
+        progressPaint.setAntiAlias(true);
+        progressPaint.setStyle(Paint.Style.FILL);
+
+        cursorFillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cursorFillPaint.setColor(generalColor); // 设置内容颜色
+
+        cursorStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cursorStrokePaint.setColor(Color.WHITE); // 设置描边颜色
+        cursorStrokePaint.setStyle(Paint.Style.STROKE);
+        cursorStrokePaint.setStrokeWidth(QMUIDisplayHelper.dp2px(context,1)); // 设置描边宽度
+
+        cursonTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cursonTextPaint.setColor(Color.WHITE); // 设置描边颜色
+        cursonTextPaint.setTextSize(cursorTextSize);
+
+        currentAmountPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        currentAmountPaint.setColor(generalColor);
+        currentAmountPaint.setTextSize(currentAmountTextSize);
+
     }
 
     private void initAttr(Context context, AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.TreasureSnatchProgressBar);
         cursorHeight = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorHeight,0);
-        cursorWidth = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorWidth, 50);
-        progressBarHeight = cursorHeight*0.75f;
-        radius = QMUIDisplayHelper.dp2px(context,100);
+        cursorWidth = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorWidth, 0);
+        cursorTextSize = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorTextSize,0f);
+        currentAmountTextSize = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_currentAmountTextSize,0f);
+        radius = QMUIDisplayHelper.dp2px(context,9);
+        int imageResId = typedArray.getResourceId(R.styleable.TreasureSnatchProgressBar_indicatorSrc, -1);
+        if (-1 == imageResId){
+            indicatorBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
+        }
         typedArray.recycle();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getWidth(),(int) cursorHeight);
+        Log.d(TAG, "onMeasure: widthMeasureSpec:"+widthMeasureSpec);
+        /*预计自定义view高度 如果isExpand = true 高度是 游标高度+游标到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度 */
+        cursorToTopMargin = (int) ((failBlockSize.getHeight() - cursorHeight)/2);
+        float heightEstimate = cursorHeight+ cursorToTopMargin;
+        if (null!=indicatorBitmap){
+            heightEstimate += indicatorBitmap.getHeight()+currentAmountMargin;
+        }
+        if (0!=currentAmountTextSize){
+            heightEstimate+=currentAmountTextSize;
+        }
+        setMeasuredDimension(widthMeasureSpec,(int) heightEstimate);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRoundRect(progressBackGroundRectF,radius,radius,progressBgPaint);
+        //真实进度条长度-游标长度
+        progressRealWidth = getWidth() - cursorWidth;
+        currentProgressWidth = progressRealWidth * getPerCent();
+        if (currentProgressWidth<0){
+            currentProgressWidth = 0;
+        }
+        if (currentProgressWidth>progressRealWidth){
+            currentProgressWidth = progressRealWidth;
+        }
+        progressBarHeight = cursorHeight*0.75f;
+        cursorToProgressMargin = (cursorHeight - progressBarHeight)/2;
+        drawBottom(canvas);
+        drawProgress(canvas,currentProgressWidth);
+        if (isFailed){
+            drawFailBlock(canvas);
+        }
+        drawCursor(canvas,currentProgressWidth);
+
+    }
+    /** 绘制中间失败矩形 */
+    private void drawFailBlock(Canvas canvas) {
+        failBlockPaint.setStyle(Paint.Style.FILL);
+        failBlockPaint.setColor(progressFailedColor);
+        float failLeft = (float) getWidth() /2-(float)failBlockSize.getWidth()/2;
+        failBlockRectF.set(failLeft,0,failLeft+failBlockSize.getWidth(),failBlockSize.getHeight());
+        canvas.drawRoundRect(failBlockRectF, failBlockRadius, failBlockRadius, failBlockPaint);
+        failBlockStrokePaint.setColor(Color.WHITE);
+        failBlockStrokePaint.setStyle(Paint.Style.STROKE);
+        failBlockStrokePaint.setStrokeWidth(QMUIDisplayHelper.dp2px(getContext(),1)); // 设置描边宽度
+        canvas.drawRoundRect(failBlockRectF, failBlockRadius, failBlockRadius, failBlockStrokePaint);
+        failBlockTextPaint.setStyle(Paint.Style.FILL);
+        failBlockTextPaint.setColor(Color.WHITE);
+        failBlockTextPaint.setTextSize(QMUIDisplayHelper.sp2px(getContext(),12));
+        float textHeight = failBlockTextPaint.descent() - failBlockTextPaint.ascent();
+        float textOffset = (textHeight / 2) - failBlockTextPaint.descent();
+        float centerX = failBlockRectF.centerX();
+        float centerY = failBlockRectF.centerY();
+        // TODO: 13/06/2024 不太确定这里是否需要多语言
+        String perCentStr = "Fail";
+        float textWidth = failBlockTextPaint.measureText(perCentStr);
+        canvas.drawText(perCentStr, centerX-textWidth/2, centerY + textOffset, failBlockTextPaint);
+    }
+
+    /** 绘制游标*/
+    private void drawCursor(Canvas canvas, double currentProgressWidth) {
+        cursorRectF.set((float) currentProgressWidth,0f+cursorToTopMargin,(float) (currentProgressWidth+cursorWidth),cursorToTopMargin+cursorHeight);
+        if (isFailed){
+            cursorFillPaint.setColor(progressFailedColor);
+        }else {
+            cursorFillPaint.setColor(generalColor);
+        }
+        canvas.drawRoundRect(cursorRectF, radius, radius, cursorFillPaint);
+        // 绘制描边的圆角矩形
+        canvas.drawRoundRect(cursorRectF, radius, radius, cursorStrokePaint);
+        //绘制游标中心文字
+        float textHeight = cursonTextPaint.descent() - cursonTextPaint.ascent();
+        float textOffset = (textHeight / 2) - cursonTextPaint.descent();
+        float centerX = cursorRectF.centerX();
+        float centerY = cursorRectF.centerY();
+        String perCentStr = getPerCentStr()+"%";
+        float textWidth = cursonTextPaint.measureText(perCentStr);
+        canvas.drawText(perCentStr, centerX-textWidth/2, centerY + textOffset, cursonTextPaint);
+        drawIndicator(canvas);
+        drawCurrentAmount(canvas);
 
     }
 
-    public void setProgress(double progress){
-        this.progress = progress;
+    private void drawCurrentAmount(Canvas canvas) {
+        //绘制游标中心文字
+        float textHeight = currentAmountPaint.descent() - currentAmountPaint.ascent();
+        float textOffset = (textHeight / 2) - currentAmountPaint.descent();
+        float centerX = cursorRectF.centerX();
+        float cursorBottom = cursorRectF.bottom;
+        float centerY = cursorBottom+currentAmountMargin+textHeight;
+        if (null!=indicatorBitmap){
+            centerY+=indicatorBitmap.getHeight();
+        }
+        String currentStr = currentAmount+"";
+        float textWidth = currentAmountPaint.measureText(currentStr);
+        canvas.drawText(currentStr,centerX-textWidth/2,centerY-textOffset,currentAmountPaint);
+    }
+
+    /*绘制指示器*/
+    private void drawIndicator(Canvas canvas){
+        if (null!=indicatorBitmap){
+            float centerX = cursorRectF.centerX();
+            float indicatorX = centerX - (float) indicatorBitmap.getWidth() /2;
+            canvas.drawBitmap(indicatorBitmap,indicatorX,cursorRectF.bottom,null);
+        }
+    }
+
+    /**绘制进度条*/
+    private void drawProgress(Canvas canvas, double currentProgressWidth) {
+        float top = cursorToTopMargin +(float) cursorToProgressMargin;
+        progressRectF.set(0f,top, (float) currentProgressWidth+cursorWidth, top+progressBarHeight);
+        if (isFailed){
+            progressPaint.setColor(progressFailedColor);
+        }else {
+            progressPaint.setColor(generalColor);
+        }
+        canvas.drawRoundRect(progressRectF,radius,radius,progressPaint);
+    }
+
+    /** 绘制进度条底部区域 */
+    private void drawBottom(Canvas canvas) {
+        float top = cursorToTopMargin +(float) cursorToProgressMargin;
+        progressBackGroundRectF.set(0f,top,getWidth(),top+progressBarHeight);
+        canvas.drawRoundRect(progressBackGroundRectF,radius,radius,progressBgPaint);
+    }
+
+    public void setCurrentAmount(double currentAmount){
+        this.currentAmount = currentAmount;
+        invalidate();
+    }
+    private double getPerCent(){
+        return this.currentAmount / prizePool;
+    }
+    /** 获取百分比字符串 */
+    private String getPerCentStr(){
+        return BigDecimal.valueOf(getPerCent()).multiply(BigDecimal.valueOf(100)).setScale(0, RoundingMode.DOWN)+"";
+    }
+
+    public void setPrizePool(double prizePool) {
+        this.prizePool = prizePool;
+    }
+    public void setFailed(boolean failed) {
+        this.isFailed = failed;
+        invalidate();
     }
 }
