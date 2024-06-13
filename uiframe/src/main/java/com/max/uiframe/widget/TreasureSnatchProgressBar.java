@@ -156,10 +156,10 @@ public class TreasureSnatchProgressBar extends View {
         cursorToProgressMargin = (cursorHeight - progressBarHeight)/2;
         drawBottom(canvas);
         drawProgress(canvas,currentProgressWidth);
+        drawCursor(canvas,currentProgressWidth);
         if (isFailed){
             drawFailBlock(canvas);
         }
-        drawCursor(canvas,currentProgressWidth);
 
     }
     /** 绘制中间失败矩形 */
@@ -271,5 +271,14 @@ public class TreasureSnatchProgressBar extends View {
     public void setFailed(boolean failed) {
         this.isFailed = failed;
         invalidate();
+    }
+
+    public static enum TreasureSnatchProgressBarState{
+        COLLECTING,//正在收集中
+        COLLECT_SUCCESS,//收集成功
+        COLLECT_EXCEED, //收集超出
+        COLLECT_FAIL,//收集失败
+
+
     }
 }
