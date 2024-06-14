@@ -24,10 +24,19 @@ class NextActivity:AppCompatActivity() {
             progressBar.setCurrentAmount(progress)
         }
         findViewById<View>(R.id.btnFailed).setOnClickListener {
-            progressBar.setFailed(true)
+            progressBar.updateProgressState(TreasureSnatchProgressState.COLLECT_FAIL)
         }
         findViewById<View>(R.id.btnSuccess).setOnClickListener {
-            progressBar.setFailed(false)
+            progressBar.updateProgressState(TreasureSnatchProgressState.COLLECT_SUCCESS)
+        }
+        findViewById<View>(R.id.btnExceed).setOnClickListener {
+            progressBar.updateProgressState(TreasureSnatchProgressState.COLLECT_EXCEED)
+        }
+        findViewById<View>(R.id.btnFold).setOnClickListener {
+            progressBar.setExpand(false)
+        }
+        findViewById<View>(R.id.btnExpand).setOnClickListener {
+            progressBar.setExpand(true)
         }
     }
 }

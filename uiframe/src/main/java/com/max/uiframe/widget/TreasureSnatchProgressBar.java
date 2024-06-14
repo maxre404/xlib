@@ -19,13 +19,17 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.max.uiframe.R;
+import com.max.uiframe.TreasureSnatchProgressState;
 import com.max.uiframe.util.QMUIDisplayHelper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class TreasureSnatchProgressBar extends View {
+    /*当isExpand = true时 进度条的高度*/
     private float progressBarHeight =0f;
+    /*当isExpand = false时 进度条的高度 设计图当前默认为3dp*/
+    private float progressBarFoldHeight = 0f;
     private float cursorHeight;
     private float cursorWidth;
     private float cursorTextSize;
@@ -33,9 +37,7 @@ public class TreasureSnatchProgressBar extends View {
     private float currentAmountTextSize;
     private float radius = 0f;
     private float failBlockRadius = 0f;
-
     private boolean isExpand = true;//是否是展开时的布局 如果为false就只有一个进度条
-    private boolean isFailed = false;//是否失败
     private final Paint progressBgPaint = new Paint();//绘制进度条的底部
     private final Paint progressPaint = new Paint();//绘制进度条
     private final Paint failBlockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);//绘制失败矩形
@@ -64,6 +66,16 @@ public class TreasureSnatchProgressBar extends View {
     int generalColor = Color.parseColor("#fffe2c55");
     int progressFailedColor = Color.parseColor("#ffaeaeae");
 
+    int progressYellowColor = Color.parseColor("#ffffc93e");
+    int progressGreenColor = Color.parseColor("#ff45ba3b");
+    int progressRedColor = Color.parseColor("#fffe2c55");
+    /**失败时游标填充颜色*/
+    int cursorFailedColor = Color.parseColor("#ff9a9a9a");
+    /**当前金额失败颜色*/
+    int currentAmountFailedColor = Color.parseColor("#b2ffffff");
+
+    private TreasureSnatchProgressState progressState = TreasureSnatchProgressState.COLLECTING;
+
     public TreasureSnatchProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
@@ -74,6 +86,7 @@ public class TreasureSnatchProgressBar extends View {
         init(context, attrs);
     }
     private void init(Context context, AttributeSet attrs) {
+        progressBarFoldHeight = QMUIDisplayHelper.dp2px(context,3);
         failBlockSize = new Size(QMUIDisplayHelper.dp2px(context,64),QMUIDisplayHelper.dp2px(context,24));
         currentAmountMargin = QMUIDisplayHelper.dp2px(context,4);
         failBlockRadius = QMUIDisplayHelper.dp2px(context,2);
@@ -105,7 +118,6 @@ public class TreasureSnatchProgressBar extends View {
         cursonTextPaint.setTextSize(cursorTextSize);
 
         currentAmountPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        currentAmountPaint.setColor(generalColor);
         currentAmountPaint.setTextSize(currentAmountTextSize);
 
     }
@@ -129,43 +141,58 @@ public class TreasureSnatchProgressBar extends View {
 //        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Log.d(TAG, "onMeasure: widthMeasureSpec:"+widthMeasureSpec);
         /*预计自定义view高度 如果isExpand = true 高度是 游标高度+游标到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度 */
-        cursorToTopMargin = (int) ((failBlockSize.getHeight() - cursorHeight)/2);
-        float heightEstimate = cursorHeight+ cursorToTopMargin;
-        if (null!=indicatorBitmap){
-            heightEstimate += indicatorBitmap.getHeight()+currentAmountMargin;
+        if (isExpand) {
+            progressBarHeight = cursorHeight * 0.75f;
+            cursorToProgressMargin = (cursorHeight - progressBarHeight) / 2;
+            cursorToTopMargin = (int) ((failBlockSize.getHeight() - cursorHeight) / 2);
+            float heightEstimate = cursorHeight + cursorToTopMargin;
+            if (null != indicatorBitmap) {
+                heightEstimate += indicatorBitmap.getHeight() + currentAmountMargin;
+            }
+            if (0 != currentAmountTextSize) {
+                heightEstimate += currentAmountTextSize;
+            }
+            setMeasuredDimension(widthMeasureSpec, (int) heightEstimate);
+        } else {
+            setMeasuredDimension(widthMeasureSpec, (int) progressBarFoldHeight);
         }
-        if (0!=currentAmountTextSize){
-            heightEstimate+=currentAmountTextSize;
-        }
-        setMeasuredDimension(widthMeasureSpec,(int) heightEstimate);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //真实进度条长度-游标长度
-        progressRealWidth = getWidth() - cursorWidth;
-        currentProgressWidth = progressRealWidth * getPerCent();
-        if (currentProgressWidth<0){
-            currentProgressWidth = 0;
-        }
-        if (currentProgressWidth>progressRealWidth){
-            currentProgressWidth = progressRealWidth;
-        }
-        progressBarHeight = cursorHeight*0.75f;
-        cursorToProgressMargin = (cursorHeight - progressBarHeight)/2;
+        calculateData();
         drawBottom(canvas);
-        drawProgress(canvas,currentProgressWidth);
-        drawCursor(canvas,currentProgressWidth);
-        if (isFailed){
-            drawFailBlock(canvas);
+        drawProgress(canvas, currentProgressWidth);
+        if (isExpand) {
+            drawCursor(canvas, currentProgressWidth);
+            if (progressState == TreasureSnatchProgressState.COLLECT_FAIL) {
+                drawFailBlock(canvas);
+            }
+        }
+    }
+    /** 动态计算数据 */
+    private void calculateData() {
+        if (isExpand) {
+            //真实进度条长度-游标长度
+            progressRealWidth = getWidth() - cursorWidth;
+        } else {
+            progressRealWidth = getWidth();
         }
 
+        currentProgressWidth = progressRealWidth * getPerCent();
+        if (currentProgressWidth < 0) {
+            currentProgressWidth = 0;
+        }
+        if (currentProgressWidth > progressRealWidth) {
+            currentProgressWidth = progressRealWidth;
+        }
     }
+
     /** 绘制中间失败矩形 */
     private void drawFailBlock(Canvas canvas) {
         failBlockPaint.setStyle(Paint.Style.FILL);
-        failBlockPaint.setColor(progressFailedColor);
+        failBlockPaint.setColor(cursorFailedColor);
         float failLeft = (float) getWidth() /2-(float)failBlockSize.getWidth()/2;
         failBlockRectF.set(failLeft,0,failLeft+failBlockSize.getWidth(),failBlockSize.getHeight());
         canvas.drawRoundRect(failBlockRectF, failBlockRadius, failBlockRadius, failBlockPaint);
@@ -189,11 +216,8 @@ public class TreasureSnatchProgressBar extends View {
     /** 绘制游标*/
     private void drawCursor(Canvas canvas, double currentProgressWidth) {
         cursorRectF.set((float) currentProgressWidth,0f+cursorToTopMargin,(float) (currentProgressWidth+cursorWidth),cursorToTopMargin+cursorHeight);
-        if (isFailed){
-            cursorFillPaint.setColor(progressFailedColor);
-        }else {
-            cursorFillPaint.setColor(generalColor);
-        }
+
+        cursorFillPaint.setColor(getCursorFillColor());
         canvas.drawRoundRect(cursorRectF, radius, radius, cursorFillPaint);
         // 绘制描边的圆角矩形
         canvas.drawRoundRect(cursorRectF, radius, radius, cursorStrokePaint);
@@ -211,6 +235,7 @@ public class TreasureSnatchProgressBar extends View {
     }
 
     private void drawCurrentAmount(Canvas canvas) {
+        currentAmountPaint.setColor(getCurrentAmountColor());
         //绘制游标中心文字
         float textHeight = currentAmountPaint.descent() - currentAmountPaint.ascent();
         float textOffset = (textHeight / 2) - currentAmountPaint.descent();
@@ -237,19 +262,23 @@ public class TreasureSnatchProgressBar extends View {
     /**绘制进度条*/
     private void drawProgress(Canvas canvas, double currentProgressWidth) {
         float top = cursorToTopMargin +(float) cursorToProgressMargin;
-        progressRectF.set(0f,top, (float) currentProgressWidth+cursorWidth, top+progressBarHeight);
-        if (isFailed){
-            progressPaint.setColor(progressFailedColor);
-        }else {
-            progressPaint.setColor(generalColor);
+        if (isExpand){
+            progressRectF.set(0f,top, (float) currentProgressWidth+cursorWidth, top+progressBarHeight);
+        }else{
+            progressRectF.set(0f,0f, (float) currentProgressWidth, progressBarFoldHeight);
         }
+        progressPaint.setColor(getProgressColor());
         canvas.drawRoundRect(progressRectF,radius,radius,progressPaint);
     }
 
     /** 绘制进度条底部区域 */
     private void drawBottom(Canvas canvas) {
         float top = cursorToTopMargin +(float) cursorToProgressMargin;
-        progressBackGroundRectF.set(0f,top,getWidth(),top+progressBarHeight);
+        if (isExpand){
+            progressBackGroundRectF.set(0f,top,getWidth(),top+progressBarHeight);
+        }else{
+            progressBackGroundRectF.set(0f,0f,getWidth(),progressBarFoldHeight);
+        }
         canvas.drawRoundRect(progressBackGroundRectF,radius,radius,progressBgPaint);
     }
 
@@ -268,17 +297,53 @@ public class TreasureSnatchProgressBar extends View {
     public void setPrizePool(double prizePool) {
         this.prizePool = prizePool;
     }
-    public void setFailed(boolean failed) {
-        this.isFailed = failed;
+
+    /*更新进度状态*/
+    public void updateProgressState(TreasureSnatchProgressState progressState) {
+        this.progressState = progressState;
         invalidate();
     }
 
-    public static enum TreasureSnatchProgressBarState{
-        COLLECTING,//正在收集中
-        COLLECT_SUCCESS,//收集成功
-        COLLECT_EXCEED, //收集超出
-        COLLECT_FAIL,//收集失败
-
-
+    private int getProgressColor() {
+        switch (progressState) {
+            case COLLECT_SUCCESS:
+                return progressGreenColor;
+            case COLLECT_EXCEED:
+                return progressRedColor;
+            case COLLECT_FAIL:
+                return progressFailedColor;
+            default:
+                return progressYellowColor;
+        }
     }
+    private int getCursorFillColor() {
+        switch (progressState) {
+            case COLLECT_SUCCESS:
+                return progressGreenColor;
+            case COLLECT_EXCEED:
+                return progressRedColor;
+            case COLLECT_FAIL:
+                return cursorFailedColor;
+            default:
+                return progressYellowColor;
+        }
+    }
+    private int getCurrentAmountColor() {
+        switch (progressState) {
+            case COLLECT_SUCCESS:
+                return progressGreenColor;
+            case COLLECT_EXCEED:
+                return progressRedColor;
+            case COLLECT_FAIL:
+                return currentAmountFailedColor;
+            default:
+                return progressYellowColor;
+        }
+    }
+    /**展开或折叠重新计算高度以及绘制*/
+    public void setExpand(boolean expand) {
+        isExpand = expand;
+        requestLayout();
+    }
+
 }
