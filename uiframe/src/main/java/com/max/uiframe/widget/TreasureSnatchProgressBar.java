@@ -90,8 +90,6 @@ public class TreasureSnatchProgressBar extends View {
         failBlockSize = new Size(QMUIDisplayHelper.dp2px(context,64),QMUIDisplayHelper.dp2px(context,24));
         currentAmountMargin = QMUIDisplayHelper.dp2px(context,4);
         failBlockRadius = QMUIDisplayHelper.dp2px(context,2);
-        Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_treasure_snatch_indicator, null);
-        indicatorBitmap = drawable != null ? ((BitmapDrawable) drawable).getBitmap() : null;
         initAttr(context, attrs);
         initPaint(context);
     }
@@ -130,17 +128,25 @@ public class TreasureSnatchProgressBar extends View {
         currentAmountTextSize = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_currentAmountTextSize,0f);
         radius = QMUIDisplayHelper.dp2px(context,9);
         int imageResId = typedArray.getResourceId(R.styleable.TreasureSnatchProgressBar_indicatorSrc, -1);
-        if (-1 == imageResId){
+        Log.d(TAG, "initAttr: 资源id:"+imageResId);
+        if (-1 != imageResId){
             indicatorBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
+            if (null==indicatorBitmap){
+                Log.d(TAG, "initAttr: 获取图片为空哦");
+            }else{
+                Log.d(TAG, "initAttr: 获取到了完整的图片");
+            }
         }
         typedArray.recycle();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.d(TAG, "onMeasure: widthMeasureSpec:"+widthMeasureSpec);
-        /*预计自定义view高度 如果isExpand = true 高度是 游标高度+游标到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度 */
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        /*
+        * 预计自定义view高度 如果isExpand = true 高度是 游标高度+游标到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度
+        * 如果isExpand = false 高度是=progressBarFoldHeight
+        * */
         if (isExpand) {
             progressBarHeight = cursorHeight * 0.75f;
             cursorToProgressMargin = (cursorHeight - progressBarHeight) / 2;
