@@ -21,6 +21,16 @@
         app:currentAmountTextSize="10sp"
         app:indicatorSrc="@drawable/ic_treasure_snatch_indicator"
         android:background="@color/purple_200"
+        android:visibility="gone"
+        />
+
+    <com.max.uiframe.OneToWinLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
         />
 
     <Button

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_135"
+        android:layout_marginHorizontal="@dimen/dp_9"
+        android:background="@drawable/shape_corner_4dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_4"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_one_win_time_progress_bottom"
+                />
+            <View
+                android:id="@+id/timeProgress"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_one_win_time_progress"
+                />
+
+        </FrameLayout>
+
+        <com.max.uiframe.widget.TreasureSnatchProgressBar
+            android:id="@+id/treasureSnatchProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_7"
+            android:layout_marginTop="@dimen/dp_40"
+            app:currentAmountTextSize="@dimen/sp_10"
+            app:cursorHeight="@dimen/dp_16"
+            app:cursorTextSize="@dimen/sp_10"
+            app:cursorWidth="@dimen/dp_34"
+            app:indicatorSrc="@drawable/ic_treasure_snatch_indicator"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

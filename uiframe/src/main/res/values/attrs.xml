@@ -13,6 +13,4 @@
         <!--当前金额文本大小-->
         <attr name="currentAmountTextSize" format="dimension"/>
     </declare-styleable>
-
-
 </resources>
