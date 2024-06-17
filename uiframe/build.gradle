@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.github.liangjingkanji:spannable:1.2.0'
+//    implementation 'com.github.liangjingkanji:Net:3.4.14'
 
 
 }
