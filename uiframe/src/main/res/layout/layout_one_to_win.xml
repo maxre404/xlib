@@ -33,10 +33,11 @@
             android:layout_marginHorizontal="@dimen/dp_7"
             android:layout_marginTop="@dimen/dp_40"
             app:currentAmountTextSize="@dimen/sp_10"
-            app:cursorHeight="@dimen/dp_16"
+            app:failBlockHeight="@dimen/dp_24"
+            app:failBlockWidth="@dimen/dp_64"
             app:cursorTextSize="@dimen/sp_10"
-            app:cursorWidth="@dimen/dp_34"
             app:indicatorSrc="@drawable/ic_treasure_snatch_indicator"
+            app:oneToWinGoldSrc="@drawable/ic_amount_gold"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

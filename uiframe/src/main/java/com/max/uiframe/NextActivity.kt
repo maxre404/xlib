@@ -60,16 +60,10 @@ class NextActivity:AppCompatActivity() {
         var progressBar = findViewById<TreasureSnatchProgressBar>(R.id.progressBar)
         var progress = 50.0
         findViewById<View>(R.id.btnStart).setOnClickListener {
-//            config.amount = "50"
-//            config.notifyChange()
-//            progress++
-//            progressBar.setCurrentAmount(progress)
-            CoroutineScope(Dispatchers.IO).launch {
-                for(i in 0..10){
-                    Log.d("jeemmo", "onCreate: +++++++:$i")
-                    myWinAndRewardFlow.emit(i.toString())
-                }
-            }
+            config.amount = "50"
+            config.notifyChange()
+            progress++
+            progressBar.setCurrentAmount(progress)
         }
         findViewById<View>(R.id.btnMinus).setOnClickListener {
             progress--

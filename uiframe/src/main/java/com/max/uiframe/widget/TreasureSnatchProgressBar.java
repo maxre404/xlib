@@ -8,15 +8,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Size;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.max.uiframe.R;
 import com.max.uiframe.TreasureSnatchProgressState;
@@ -30,8 +27,6 @@ public class TreasureSnatchProgressBar extends View {
     private float progressBarHeight =0f;
     /*当isExpand = false时 进度条的高度 设计图当前默认为3dp*/
     private float progressBarFoldHeight = 0f;
-    private float cursorHeight;
-    private float cursorWidth;
     private float cursorTextSize;
     /*当前金额字体大小*/
     private float currentAmountTextSize;
@@ -52,9 +47,8 @@ public class TreasureSnatchProgressBar extends View {
     private Paint currentAmountPaint;
     private double prizePool = 100;//奖池金额
     private double currentAmount = 80;
-    private double cursorToProgressMargin = 0;//游标顶部到进度条顶部的距离
     private int currentAmountMargin = 0;//当前金额到游标指示器的距离 目前设计图是4dp
-    private int cursorToTopMargin = 0;//游标到顶部距离
+    private int progressToTopMargin = 0;//进度条到顶部距离
     private final RectF progressBackGroundRectF = new RectF();
     private final RectF progressRectF = new RectF();
     private final RectF cursorRectF = new RectF();
@@ -63,6 +57,7 @@ public class TreasureSnatchProgressBar extends View {
     double currentProgressWidth = 0;
     private static final String TAG = "debug11";
     private Bitmap indicatorBitmap;
+    private Bitmap goldBitMap;
     int generalColor = Color.parseColor("#fffe2c55");
     int progressFailedColor = Color.parseColor("#ffaeaeae");
 
@@ -87,7 +82,6 @@ public class TreasureSnatchProgressBar extends View {
     }
     private void init(Context context, AttributeSet attrs) {
         progressBarFoldHeight = QMUIDisplayHelper.dp2px(context,3);
-        failBlockSize = new Size(QMUIDisplayHelper.dp2px(context,64),QMUIDisplayHelper.dp2px(context,24));
         currentAmountMargin = QMUIDisplayHelper.dp2px(context,4);
         failBlockRadius = QMUIDisplayHelper.dp2px(context,2);
         initAttr(context, attrs);
@@ -122,20 +116,19 @@ public class TreasureSnatchProgressBar extends View {
 
     private void initAttr(Context context, AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.TreasureSnatchProgressBar);
-        cursorHeight = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorHeight,0);
-        cursorWidth = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorWidth, 0);
+       float cursorHeight = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_failBlockHeight,0);
+        float cursorWidth = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_failBlockWidth, 0);
+        failBlockSize = new Size((int) cursorWidth, (int)cursorHeight);
         cursorTextSize = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_cursorTextSize,0f);
         currentAmountTextSize = typedArray.getDimension(R.styleable.TreasureSnatchProgressBar_currentAmountTextSize,0f);
         radius = QMUIDisplayHelper.dp2px(context,9);
         int imageResId = typedArray.getResourceId(R.styleable.TreasureSnatchProgressBar_indicatorSrc, -1);
-        Log.d(TAG, "initAttr: 资源id:"+imageResId);
+        int imageGoldResId = typedArray.getResourceId(R.styleable.TreasureSnatchProgressBar_oneToWinGoldSrc, -1);
         if (-1 != imageResId){
             indicatorBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
-            if (null==indicatorBitmap){
-                Log.d(TAG, "initAttr: 获取图片为空哦");
-            }else{
-                Log.d(TAG, "initAttr: 获取到了完整的图片");
-            }
+        }
+        if (-1 != imageGoldResId){
+            goldBitMap = BitmapFactory.decodeResource(getResources(), imageGoldResId);
         }
         typedArray.recycle();
     }
@@ -144,14 +137,13 @@ public class TreasureSnatchProgressBar extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         /*
-        * 预计自定义view高度 如果isExpand = true 高度是 游标高度+游标到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度
+        * 预计自定义view高度 如果isExpand = true 高度是 进度条高度+进度条到顶部的距离+指示器高度+当前金额与指示器的边距+当前金额字体高度
         * 如果isExpand = false 高度是=progressBarFoldHeight
         * */
         if (isExpand) {
-            progressBarHeight = cursorHeight * 0.75f;
-            cursorToProgressMargin = (cursorHeight - progressBarHeight) / 2;
-            cursorToTopMargin = (int) ((failBlockSize.getHeight() - cursorHeight) / 2);
-            float heightEstimate = cursorHeight + cursorToTopMargin;
+            progressBarHeight =  failBlockSize.getHeight() /(float)2;
+            progressToTopMargin = (int) ((failBlockSize.getHeight() - progressBarHeight) / 2);
+            float heightEstimate = progressBarHeight + progressToTopMargin;
             if (null != indicatorBitmap) {
                 heightEstimate += indicatorBitmap.getHeight() + currentAmountMargin;
             }
@@ -179,13 +171,7 @@ public class TreasureSnatchProgressBar extends View {
     }
     /** 动态计算数据 */
     private void calculateData() {
-        if (isExpand) {
-            //真实进度条长度-游标长度
-            progressRealWidth = getWidth() - cursorWidth;
-        } else {
-            progressRealWidth = getWidth();
-        }
-
+        progressRealWidth = getWidth();
         currentProgressWidth = progressRealWidth * getPerCent();
         if (currentProgressWidth < 0) {
             currentProgressWidth = 0;
@@ -221,22 +207,21 @@ public class TreasureSnatchProgressBar extends View {
 
     /** 绘制游标*/
     private void drawCursor(Canvas canvas, double currentProgressWidth) {
-        cursorRectF.set((float) currentProgressWidth,0f+cursorToTopMargin,(float) (currentProgressWidth+cursorWidth),cursorToTopMargin+cursorHeight);
-
-        cursorFillPaint.setColor(getCursorFillColor());
-        canvas.drawRoundRect(cursorRectF, radius, radius, cursorFillPaint);
-        // 绘制描边的圆角矩形
-        canvas.drawRoundRect(cursorRectF, radius, radius, cursorStrokePaint);
-        //绘制游标中心文字
-        float textHeight = cursonTextPaint.descent() - cursonTextPaint.ascent();
-        float textOffset = (textHeight / 2) - cursonTextPaint.descent();
-        float centerX = cursorRectF.centerX();
-        float centerY = cursorRectF.centerY();
-        String perCentStr = getPerCentStr()+"%";
-        float textWidth = cursonTextPaint.measureText(perCentStr);
-        canvas.drawText(perCentStr, centerX-textWidth/2, centerY + textOffset, cursonTextPaint);
-        drawIndicator(canvas);
-        drawCurrentAmount(canvas);
+//        cursorRectF.set((float) currentProgressWidth,0f+ progressToTopMargin,(float) (currentProgressWidth+cursorWidth), progressToTopMargin +cursorHeight);
+//        cursorFillPaint.setColor(getCursorFillColor());
+//        canvas.drawRoundRect(cursorRectF, radius, radius, cursorFillPaint);
+//        // 绘制描边的圆角矩形
+//        canvas.drawRoundRect(cursorRectF, radius, radius, cursorStrokePaint);
+//        //绘制游标中心文字
+//        float textHeight = cursonTextPaint.descent() - cursonTextPaint.ascent();
+//        float textOffset = (textHeight / 2) - cursonTextPaint.descent();
+//        float centerX = cursorRectF.centerX();
+//        float centerY = cursorRectF.centerY();
+//        String perCentStr = getPerCentStr()+"%";
+//        float textWidth = cursonTextPaint.measureText(perCentStr);
+//        canvas.drawText(perCentStr, centerX-textWidth/2, centerY + textOffset, cursonTextPaint);
+//        drawIndicator(canvas);
+//        drawCurrentAmount(canvas);
 
     }
 
@@ -245,41 +230,64 @@ public class TreasureSnatchProgressBar extends View {
         //绘制游标中心文字
         float textHeight = currentAmountPaint.descent() - currentAmountPaint.ascent();
         float textOffset = (textHeight / 2) - currentAmountPaint.descent();
-        float centerX = cursorRectF.centerX();
-        float cursorBottom = cursorRectF.bottom;
-        float centerY = cursorBottom+currentAmountMargin+textHeight;
+        float centerX = progressRectF.centerX();
+        float progressBottom = progressRectF.bottom;
+        float centerY = progressBottom+currentAmountMargin+textHeight;
         if (null!=indicatorBitmap){
             centerY+=indicatorBitmap.getHeight();
         }
         String currentStr = currentAmount+"";
         float textWidth = currentAmountPaint.measureText(currentStr);
-        canvas.drawText(currentStr,centerX-textWidth/2,centerY-textOffset,currentAmountPaint);
+        float textX = centerX-textWidth/2;
+        float textY = centerY-textOffset;
+        int goldMargin = QMUIDisplayHelper.dp2px(getContext(),2);
+        if (textX-goldBitMap.getWidth()-goldMargin<0){
+            //防止文字左边越界
+            textX = goldBitMap.getWidth()+goldMargin;
+        }
+        canvas.drawText(currentStr,textX,textY,currentAmountPaint);
+        canvas.drawBitmap(goldBitMap,textX-goldBitMap.getWidth()-goldMargin,getHeight()-goldBitMap.getHeight(),null);
     }
 
     /*绘制指示器*/
     private void drawIndicator(Canvas canvas){
         if (null!=indicatorBitmap){
-            float centerX = cursorRectF.centerX();
-            float indicatorX = centerX - (float) indicatorBitmap.getWidth() /2;
-            canvas.drawBitmap(indicatorBitmap,indicatorX,cursorRectF.bottom,null);
+            float rightX = progressRectF.right;
+            float indicatorX = rightX - (float) indicatorBitmap.getWidth();
+            canvas.drawBitmap(indicatorBitmap,indicatorX,progressRectF.bottom,null);
         }
     }
 
     /**绘制进度条*/
     private void drawProgress(Canvas canvas, double currentProgressWidth) {
-        float top = cursorToTopMargin +(float) cursorToProgressMargin;
+        float top = progressToTopMargin;
         if (isExpand){
-            progressRectF.set(0f,top, (float) currentProgressWidth+cursorWidth, top+progressBarHeight);
+            progressRectF.set(0f,top, (float) currentProgressWidth, top+progressBarHeight);
         }else{
             progressRectF.set(0f,0f, (float) currentProgressWidth, progressBarFoldHeight);
         }
         progressPaint.setColor(getProgressColor());
         canvas.drawRoundRect(progressRectF,radius,radius,progressPaint);
+        if (isExpand){
+            float textHeight = cursonTextPaint.descent() - cursonTextPaint.ascent();
+            float textOffset = (textHeight / 2) - cursonTextPaint.descent();
+            float centerX = progressRectF.centerX();
+            float centerY = progressRectF.centerY();
+            String perCentStr = getPerCentStr()+"%";
+            float textWidth = cursonTextPaint.measureText(perCentStr);
+            float textX = centerX-textWidth/2;
+            if (textX<0){//防止文字左边越界
+                textX = 0;
+            }
+            canvas.drawText(perCentStr, textX, centerY + textOffset, cursonTextPaint);
+            drawIndicator(canvas);
+            drawCurrentAmount(canvas);
+        }
     }
 
     /** 绘制进度条底部区域 */
     private void drawBottom(Canvas canvas) {
-        float top = cursorToTopMargin +(float) cursorToProgressMargin;
+        float top = progressToTopMargin;
         if (isExpand){
             progressBackGroundRectF.set(0f,top,getWidth(),top+progressBarHeight);
         }else{
