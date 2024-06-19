@@ -1,9 +1,11 @@
 package com.max.uiframe.widget;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -69,7 +71,11 @@ public class TreasureSnatchProgressBar extends View {
     /**当前金额失败颜色*/
     int currentAmountFailedColor = Color.parseColor("#b2ffffff");
 
+    private Paint progressShadowPaint;
+
+
     private TreasureSnatchProgressState progressState = TreasureSnatchProgressState.COLLECTING;
+    private ValueAnimator shadowAnimator;
 
     public TreasureSnatchProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -86,6 +92,8 @@ public class TreasureSnatchProgressBar extends View {
         failBlockRadius = QMUIDisplayHelper.dp2px(context,2);
         initAttr(context, attrs);
         initPaint(context);
+//        startBreathingAnimation();
+//        startShadowAnimation();
     }
 
     private void initPaint(Context context) {
@@ -112,7 +120,43 @@ public class TreasureSnatchProgressBar extends View {
         currentAmountPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         currentAmountPaint.setTextSize(currentAmountTextSize);
 
+        progressShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        progressShadowPaint.setStyle(Paint.Style.FILL);
+        progressShadowPaint.setColor(Color.parseColor("#80000000"));
+//        progressShadowPaint.setColor(Color.RED);
+        progressShadowPaint.setMaskFilter(new BlurMaskFilter(1f, BlurMaskFilter.Blur.SOLID)); // 设置模糊半径和模糊类型
+//        shadowPaint.setShadowLayer(10, 0, 0, Color.parseColor("#80000000")); // 初始阴影设置
+//        setLayerType(LAYER_TYPE_SOFTWARE, shadowPaint); // 需要关闭硬件加速以便显示阴影
+
     }
+
+    private void startBreathingAnimation() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 50);
+        animator.setDuration(5000);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.REVERSE);
+        animator.addUpdateListener(animation -> {
+            float shadowRadius = (float) animation.getAnimatedValue();
+//            shadowPaint.setShadowLayer(shadowRadius, 0, 0, Color.parseColor("#ff0133"));
+            progressShadowPaint.setShadowLayer(shadowRadius, 10, 0, Color.parseColor("#ff0133"));
+            invalidate();
+        });
+        animator.start();
+    }
+
+    private void startShadowAnimation() {
+        shadowAnimator = ValueAnimator.ofFloat(1, 40);
+        shadowAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        shadowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        shadowAnimator.setDuration(1000); // 阴影动画的周期
+        shadowAnimator.addUpdateListener(animation -> {
+            float animatedValue = (float) animation.getAnimatedValue();
+            progressShadowPaint.setMaskFilter(new BlurMaskFilter(animatedValue, BlurMaskFilter.Blur.SOLID));
+            invalidate(); // 重绘
+        });
+        shadowAnimator.start();
+    }
+
 
     private void initAttr(Context context, AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.TreasureSnatchProgressBar);
@@ -160,7 +204,8 @@ public class TreasureSnatchProgressBar extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         calculateData();
-        drawBottom(canvas);
+//        drawBottom(canvas);
+        drawShadow(canvas);
         drawProgress(canvas, currentProgressWidth);
         if (isExpand) {
             drawCursor(canvas, currentProgressWidth);
@@ -168,6 +213,16 @@ public class TreasureSnatchProgressBar extends View {
                 drawFailBlock(canvas);
             }
         }
+    }
+
+    private void drawShadow(Canvas canvas) {
+        float top = progressToTopMargin;
+        if (isExpand){
+            progressBackGroundRectF.set(0f, top, getWidth(), top + progressBarHeight);
+        } else {
+            progressBackGroundRectF.set(0f, 0f, getWidth(), progressBarFoldHeight);
+        }
+        canvas.drawRoundRect(progressBackGroundRectF, radius, radius, progressShadowPaint);
     }
     /** 动态计算数据 */
     private void calculateData() {
@@ -315,6 +370,9 @@ public class TreasureSnatchProgressBar extends View {
     /*更新进度状态*/
     public void updateProgressState(TreasureSnatchProgressState progressState) {
         this.progressState = progressState;
+        if (progressState == TreasureSnatchProgressState.COLLECT_EXCEED){
+            progressShadowPaint.setColor(Color.parseColor("#FF0133"));
+        }
         invalidate();
     }
 
@@ -354,6 +412,13 @@ public class TreasureSnatchProgressBar extends View {
                 return progressYellowColor;
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+    }
+
     /**展开或折叠重新计算高度以及绘制*/
     public void setExpand(boolean expand) {
         isExpand = expand;
