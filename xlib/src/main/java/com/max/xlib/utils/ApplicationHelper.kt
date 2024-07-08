@@ -3,6 +3,7 @@ package com.max.xlib.utils
 import android.content.Context
 import android.util.Log
 import com.max.xlib.log.LogFile
+import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -10,7 +11,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 
-class HookUtil {
+class ApplicationHelper {
     companion object{
        private val TAG = "xlib"
         private fun copyAssetFileToAppDirectory(context: Context, assetFileName: String?) {
@@ -51,6 +52,7 @@ class HookUtil {
         fun start(context: Context){
             copyAssetFileToAppDirectory(context,"config_script.js")
             System.loadLibrary("tool")
+            OkHttpClient
         }
 
     }

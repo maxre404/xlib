@@ -20,7 +20,6 @@ import com.max.minalib.mina.MinaIOListener
 import com.max.minalib.mina.TcpMessage
 import com.max.xlib.log.LogFile
 import com.max.xlib.ui.theme.XlibTheme
-import com.max.xlib.utils.HookUtil
 import kotlin.concurrent.thread
 
 class MainActivity : ComponentActivity() {
