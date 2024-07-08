@@ -26,7 +26,6 @@ import kotlin.concurrent.thread
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        HookUtil.init("192.192.191.119",8080)
         setContent {
             XlibTheme {
                 // A surface container using the 'background' color from the theme

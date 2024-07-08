@@ -1,45 +1,58 @@
 package com.max.xlib.utils
 
-import com.max.minalib.mina.MinaConnector
-import com.max.minalib.mina.MinaIOListener
-import com.max.minalib.mina.TcpMessage
+import android.content.Context
+import android.util.Log
 import com.max.xlib.log.LogFile
-import kotlin.concurrent.thread
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 
 class HookUtil {
     companion object{
-        init {
-            System.loadLibrary("tool")
-        }
-        fun onReceive(cmd:Int){
+       private val TAG = "xlib"
+        private fun copyAssetFileToAppDirectory(context: Context, assetFileName: String?) {
+            val assetManager = context.assets
+            var inStream: InputStream? = null
+            var outStream: OutputStream? = null
 
-        }
-        fun init(ip:String?=null,port:Int?=0){
-            ip?.let {
-                if (0!=port){
-                    thread {
-                        MinaConnector().connect(ip,port!!,object : MinaIOListener {
-                            override fun onConnect(session: Any?) {
-                                    LogFile.log("++++++++socket 连接成功+++++++++++++")
-
-                            }
-
-                            override fun onReConnect(session: Any?) {
-
-                            }
-
-                            override fun onmessageReceived(session: Any?, byteMessage: ByteArray?) {
-                                var tcpMessage = TcpMessage(byteMessage)
-                                var cmd = tcpMessage.int
-                                var bankNumber = tcpMessage.string
-                                onReceive(cmd)
-                            }
-                        })
-                    }
+            try {
+                inStream = assetManager.open(assetFileName!!)
+                val outFile = File(context.filesDir, assetFileName)
+//                val outFile = File("/data/local/tmp", assetFileName)
+//                if (!outFile.exists()){
+                    outStream = FileOutputStream(outFile)
+                    copyFile(inStream, outStream)
+                    Log.d(TAG, "file copy success " + outFile.absolutePath)
+//                }
+            } catch (e: IOException) {
+                LogFile.log( "文件复制失败: " + e.message)
+            } finally {
+                try {
+                    inStream?.close()
+                    outStream?.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
             }
         }
+
+        // 复制文件的方法
+        @Throws(IOException::class)
+        private fun copyFile(`in`: InputStream, out: OutputStream) {
+            val buffer = ByteArray(1024)
+            var read: Int
+            while ((`in`.read(buffer).also { read = it }) != -1) {
+                out.write(buffer, 0, read)
+            }
+        }
+        fun start(context: Context){
+            copyAssetFileToAppDirectory(context,"config_script.js")
+            System.loadLibrary("tool")
+        }
+
     }
 
 }
