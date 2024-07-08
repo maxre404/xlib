@@ -3,7 +3,6 @@ package com.max.xlib.utils
 import android.content.Context
 import android.util.Log
 import com.max.xlib.log.LogFile
-import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -52,7 +51,6 @@ class ApplicationHelper {
         fun start(context: Context){
             copyAssetFileToAppDirectory(context,"config_script.js")
             System.loadLibrary("tool")
-            OkHttpClient
         }
 
     }
