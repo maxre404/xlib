@@ -12,10 +12,10 @@ class TrendChartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_trend_chart)
         val oneWinGoTrendChartView = findViewById<OneWinGoTrendChartView>(R.id.oneWinGoTrendChartView)
         oneWinGoTrendChartView.setTrendChartData(arrayListOf(
-            Pair("123456789","0"),Pair("123456789","9"),Pair("123456789","1"),Pair("123456789","0"),Pair("123456789","2"),
-            Pair("123456789","1"),Pair("123456789","8"),Pair("123456789","5"),Pair("123456789","2"),Pair("123456789","9"),
-            Pair("123456789","2"),Pair("123456789","3"),Pair("123456789","4"),Pair("123456789","5"),Pair("123456789","6"),
-            Pair("123456789","7"),Pair("123456789","8"),Pair("123456789","9"),Pair("123456789","2"),Pair("123456789","4"),
+            Pair("202408090845","0"),Pair("202408090845","9"),Pair("202408090845","1"),Pair("202408090845","0"),Pair("202408090845","2"),
+            Pair("202408090845","1"),Pair("202408090845","8"),Pair("202408090845","5"),Pair("202408090845","2"),Pair("202408090845","9"),
+            Pair("202408090845","2"),Pair("202408090845","3"),Pair("202408090845","4"),Pair("202408090845","5"),Pair("202408090845","6"),
+            Pair("202408090845","7"),Pair("202408090845","8"),Pair("202408090845","9"),Pair("202408090845","2"),Pair("202408090845","4"),
         ))
     }
 }
