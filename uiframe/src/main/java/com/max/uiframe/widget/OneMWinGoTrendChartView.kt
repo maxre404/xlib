@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 /**
  * 印度彩 1分winGo 走势图
  */
-class OneWinGoTrendChartView : View {
+class OneMWinGoTrendChartView : View {
     constructor(context: Context?) : super(context){
         initData(context)
     }
@@ -39,7 +39,7 @@ class OneWinGoTrendChartView : View {
     ){
         initData(context)
     }
-    private val tag = OneWinGoTrendChartView::class.java.simpleName
+    private val tag = OneMWinGoTrendChartView::class.java.simpleName
     /*item 高度*/
     private var itemHeight = 0
 

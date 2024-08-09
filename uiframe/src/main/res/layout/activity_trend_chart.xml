@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-            <com.max.uiframe.widget.OneWinGoTrendChartView
+            <com.max.uiframe.widget.OneMWinGoTrendChartView
                 android:id="@+id/oneWinGoTrendChartView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
