@@ -60,11 +60,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':MinaLib')
     api 'com.elvishew:xlog:1.10.1'
-    api 'com.alibaba:arouter-api:1.5.2'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    kapt 'com.alibaba:arouter-compiler:1.5.2'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-//    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+//    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
 }

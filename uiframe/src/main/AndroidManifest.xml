@@ -8,6 +8,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
+        android:allowClearUserData="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Xlib">
         <activity
             android:name=".MainActivity"

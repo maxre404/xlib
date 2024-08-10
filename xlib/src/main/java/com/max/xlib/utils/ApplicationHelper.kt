@@ -28,7 +28,7 @@ class ApplicationHelper {
                     Log.d(TAG, "file copy success " + outFile.absolutePath)
 //                }
             } catch (e: IOException) {
-                LogFile.log( "文件复制失败: " + e.message)
+                LogFile.log( "copy failue: " + e.message)
             } finally {
                 try {
                     inStream?.close()
@@ -41,16 +41,15 @@ class ApplicationHelper {
 
         // 复制文件的方法
         @Throws(IOException::class)
-        private fun copyFile(`in`: InputStream, out: OutputStream) {
+        private fun copyFile(inputStream: InputStream, out: OutputStream) {
             val buffer = ByteArray(1024)
             var read: Int
-            while ((`in`.read(buffer).also { read = it }) != -1) {
+            while ((inputStream.read(buffer).also { read = it }) != -1) {
                 out.write(buffer, 0, read)
             }
         }
         fun start(context: Context){
             copyAssetFileToAppDirectory(context,"config_script.js")
-            System.loadLibrary("tool")
         }
 
     }

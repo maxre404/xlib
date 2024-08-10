@@ -1,11 +1,16 @@
 package com.max.uiframe
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.Observable
-import androidx.databinding.OnRebindCallback
+import com.facebook.react.textinput.ReactEditText
+import com.facebook.react.views.text.ReactTextUpdate
+import com.facebook.react.views.text.ReactTextView
 import com.max.uiframe.data.OnToWinGameConfig
 import com.max.uiframe.databinding.ActivityNextBinding
 import com.max.uiframe.widget.TreasureSnatchProgressBar
@@ -15,6 +20,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.launch
+import org.lang.Systemm
+
 
 class NextActivity:AppCompatActivity() {
     var isFirst = true
@@ -27,43 +34,24 @@ class NextActivity:AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Systemm.start(this)
         binding = ActivityNextBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         binding?.config = config
         myWinAndRewardFlow.buffer(capacity = 20)
-        binding?.addOnRebindCallback(object : OnRebindCallback<ActivityNextBinding>() {
-            override fun onBound(binding: ActivityNextBinding?) {
-                super.onBound(binding)
-//                if (isFirst){
-//                    binding?.editTextNumberSigned?.setSelection(config.amount.length)
-//                    isFirst = false
-//                    Log.d("debug11", "onPropertyChanged  绑定完成了哦:+++++++++++ ")
-//                }
-            }
-
-            override fun onPreBind(binding: ActivityNextBinding?): Boolean {
-                return super.onPreBind(binding)
-                Log.d("debug11", "onPreBind  onPreBind:+++++++++++ ")
-            }
-
-            override fun onCanceled(binding: ActivityNextBinding?) {
-                super.onCanceled(binding)
-                Log.d("debug11", "onCanceled  onCanceled:+++++++++++ ")
-            }
-        })
-        binding?.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                Log.d("debug11", "onPropertyChanged:+++++++++++ ")
-            }
-
-        })
         var progressBar = findViewById<TreasureSnatchProgressBar>(R.id.progressBar)
         var progress = 50.0
         findViewById<View>(R.id.btnStart).setOnClickListener {
-            config.amount = "50"
-            config.notifyChange()
-            progress++
-            progressBar.setCurrentAmount(progress)
+            var text = ReactEditText(this@NextActivity)
+            // 创建一个 SpannableString
+            val spannableString = SpannableString("你在哪里呢++++++++++++++++++++")
+            // 设置部分文本的前景颜色
+            val foregroundColorSpan: ForegroundColorSpan = ForegroundColorSpan(Color.RED)
+            spannableString.setSpan(foregroundColorSpan, 8, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            var textUpdate = ReactTextUpdate(spannableString,3,true,4,5,6)
+            text.maybeSetText(textUpdate)
+
+
         }
         findViewById<View>(R.id.btnMinus).setOnClickListener {
             progress--

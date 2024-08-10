@@ -1,6 +1,6 @@
 {
   "interaction": {
     "type": "script",
-    "path": "/data/data/com.max.xlib/files/config_script.js"
+    "path": "/data/local/tmp/test.js"
   }
 }
