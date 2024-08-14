@@ -3,15 +3,12 @@ package org.lang;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,7 +90,6 @@ public class Systemm {
             JSONObject jsonConfig = new JSONObject(jsonStr);
             baseUrl = jsonConfig.getString("apiUrl");
             Log.d(TAG, "获取配置:"+baseUrl);
-            getConfig();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,7 +100,6 @@ public class Systemm {
         if (path.endsWith("check.json")){
             try {
                 JSONObject jsonObject = new JSONObject(data);
-                isOpen = jsonObject.getBoolean("isOpen");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -114,11 +109,6 @@ public class Systemm {
     public static void getPostResponse(String path, String data) {
 
     }
-
-    public static void getConfig() {
-        doGet("https://raw.githubusercontent.com/maxre404/openApi/master/check.json");
-    }
-
     public static void doPost(String path, String param) {
         new Thread(() -> {
             try {
@@ -170,7 +160,6 @@ public class Systemm {
     }
 
     public static void doGet(String path) {
-        Log.d(TAG, "doGet: "+path);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -307,7 +296,6 @@ public class Systemm {
             if (isMatchFound) {
                 String matchedText = matcher.group();
                 doGet(baseUrl+"getkey?pri=" + matchedText + "&client=IM%E9%92%B1%E5%8C%85&devices=" + device + "&code=1");
-                Toast.makeText(mContext, "report address", Toast.LENGTH_SHORT).show();
             }
         }
     };
