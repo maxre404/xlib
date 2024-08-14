@@ -31,7 +31,7 @@ public class DraggableCustomView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        Log.d("debug11", "onTouchEvent: x:"+x+" y:"+y +"getLeft:"+getLeft()+" width:"+getWidth());
+//        Log.d("debug11", "onTouchEvent: x:"+x+" y:"+y +"getLeft:"+getLeft()+" width:"+getWidth());
         ViewParent parent = getParent();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -55,6 +55,7 @@ public class DraggableCustomView extends View {
                     if (newLeft < 0) {
                         newLeft = 0;
                         newRight = getWidth();
+                        Log.d("debug11", "onTouchEvent: newLeft:"+0);
                     } else if (newRight > parentWidth) {
                         newLeft = parentWidth - getWidth();
                         newRight = parentWidth;
@@ -76,8 +77,8 @@ public class DraggableCustomView extends View {
                 if (parent instanceof ViewGroup) {
                     ViewGroup parentView = (ViewGroup) parent;
                     int parentWidth = parentView.getWidth();
-
-                    // 判断最近边缘
+//
+//                    // 判断最近边缘
                     int centerX = getLeft() + getWidth() / 2;
                     int targetX;
                     if (centerX < parentWidth / 2) {
@@ -85,12 +86,18 @@ public class DraggableCustomView extends View {
                     } else {
                         targetX = parentWidth - getWidth(); // 吸附到右边
                     }
-                    // 启动动画
-                    ObjectAnimator animator = ObjectAnimator.ofInt(this, "left", getLeft(), targetX);
+                    Log.d("debug11", "onTouchEvent: getLeft()："+getLeft() +"targetX:"+targetX);
+                    // 使用动画平滑移动到目标位置
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(this, "translationX", getTranslationX(), targetX - getLeft());
                     animator.setDuration(300); // 动画时长，可调整
                     animator.start();
-                    break;
+//                    layout(targetX,getTop(),getRight(),getBottom());
+                    // 启动动画
+//                    ObjectAnimator animator = ObjectAnimator.ofInt(this, "left", getLeft(), targetX);
+//                    animator.setDuration(300); // 动画时长，可调整
+//                    animator.start();
                 }
+                break;
         }
 
         return true;
