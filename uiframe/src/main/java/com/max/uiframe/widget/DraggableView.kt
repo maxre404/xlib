@@ -1,99 +1,101 @@
-package com.max.uiframe.widget;
+package com.max.uiframe.widget
 
-import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
-import androidx.appcompat.widget.AppCompatImageView;
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 
-public class DraggableEdgeView extends AppCompatImageView {
 
-    private float dX, dY;
-    private int parentWidth, parentHeight;
+class DraggableView : ConstraintLayout {
+    private var dX = 0f
+    private var dY = 0f
+    private var parentWidth = 0
+    private var parentHeight = 0
 
-    public DraggableEdgeView(Context context) {
-        super(context);
-        init();
+    constructor(context: Context?) : super(context!!) {
+        init()
     }
 
-    public DraggableEdgeView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?) : super(
+        context!!, attrs
+    ) {
+        init()
     }
 
-    public DraggableEdgeView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context!!, attrs, defStyleAttr
+    ) {
+        init()
     }
 
-    private void init() {
+    private fun init() {
         // 初始化任何需要的资源
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
         // 获取父布局的宽度和高度
-        post(new Runnable() {
-            @Override
-            public void run() {
-                ViewGroup parent = (ViewGroup) getParent();
-                if (parent != null) {
-                    parentWidth = parent.getWidth();
-                    parentHeight = parent.getHeight();
-                }
-            }
-        });
+        post {
+            val parent = parent as ViewGroup
+            parentWidth = parent.width
+            parentHeight = parent.height
+        }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
                 // 记录初始位置
-                dX = getX() - event.getRawX();
-                dY = getY() - event.getRawY();
-                return true;
-            case MotionEvent.ACTION_MOVE:
+                dX = x - event.rawX
+                dY = y - event.rawY
+                return true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
                 // 拖动时更新位置
-                float newX = event.getRawX() + dX;
-                float newY = event.getRawY() + dY;
+                var newX = event.rawX + dX
+                var newY = event.rawY + dY
 
                 // 限制左右边界
                 if (newX < 0) {
-                    newX = 0;
-                } else if (newX > parentWidth - getWidth()) {
-                    newX = parentWidth - getWidth();
+                    newX = 0f
+                } else if (newX > parentWidth - width) {
+                    newX = (parentWidth - width).toFloat()
                 }
 
                 // 限制上下边界
                 if (newY < 0) {
-                    newY = 0;
-                } else if (newY > parentHeight - getHeight()) {
-                    newY = parentHeight - getHeight();
+                    newY = 0f
+                } else if (newY > parentHeight - height) {
+                    newY = (parentHeight - height).toFloat()
                 }
-                setX(newX);
-                setY(newY);
-                return true;
+                x = newX
+                y = newY
+                return true
+            }
 
-            case MotionEvent.ACTION_UP:
+            MotionEvent.ACTION_UP -> {
                 // 判断吸附到最近的边缘
-                float centerX = getX() + getWidth() / 2;
-                float targetX;
-                if (centerX < parentWidth / 2) {
-                    targetX = 0; // 吸附到左边
+                val centerX = x + width / 2
+                val targetX = if (centerX < parentWidth / 2) {
+                    0f // 吸附到左边
                 } else {
-                    targetX = parentWidth - getWidth(); // 吸附到右边
+                    (parentWidth - width).toFloat() // 吸附到右边
                 }
                 // 使用动画吸附到边缘
-                ObjectAnimator animatorX = ObjectAnimator.ofFloat(this, "x", getX(), targetX);
-                animatorX.setDuration(300);
-                animatorX.start();
-                return true;
+                val animatorX = ObjectAnimator.ofFloat(this, "x", x, targetX)
+                animatorX.setDuration(300)
+                animatorX.start()
+                return true
+            }
 
-            default:
-                return super.onTouchEvent(event);
+            else -> return super.onTouchEvent(event)
         }
     }
 }
