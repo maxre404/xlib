@@ -35,7 +35,7 @@ public class SampleFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         List<String> data = new ArrayList<>();
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 100; i++) {
             data.add("Item " + i);
         }
 
