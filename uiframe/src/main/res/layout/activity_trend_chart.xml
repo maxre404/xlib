@@ -48,20 +48,20 @@
 
     <com.max.uiframe.widget.DraggableView
         android:layout_width="@dimen/dp_180"
-        android:layout_height="@dimen/dp_120"
+        android:layout_height="@dimen/dp_260"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@color/purple_200"
         >
-        <View
-            android:id="@+id/button2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@mipmap/ic_launcher"
-            app:layout_constraintTop_toTopOf="parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="parent"
-             />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
     </com.max.uiframe.widget.DraggableView>
 

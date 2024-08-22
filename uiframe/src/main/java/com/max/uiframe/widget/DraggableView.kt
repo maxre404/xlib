@@ -6,9 +6,11 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.max.uiframe.R
+import kotlin.math.abs
 
 
 class DraggableView : ConstraintLayout {
@@ -16,6 +18,8 @@ class DraggableView : ConstraintLayout {
     private var dY = 0f
     private var parentWidth = 0
     private var parentHeight = 0
+    private var recyclerView: RecyclerView ? = null
+
 
     constructor(context: Context?) : super(context!!) {
         init()
@@ -37,6 +41,7 @@ class DraggableView : ConstraintLayout {
         // 初始化任何需要的资源
     }
 
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         // 获取父布局的宽度和高度
@@ -44,7 +49,33 @@ class DraggableView : ConstraintLayout {
             val parent = parent as ViewGroup
             parentWidth = parent.width
             parentHeight = parent.height
+            recyclerView = findViewById(R.id.rvItem)
         }
+    }
+
+    private var lastDownX = 0f
+    private var lastDownY = 0f
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        val rect = Rect()
+        recyclerView?.getGlobalVisibleRect(rect)
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                lastDownX = ev.rawX
+                lastDownY = ev.rawY
+                dX = x - ev.rawX
+                dY = y - ev.rawY
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                val deltaX = ev.rawX - lastDownX
+                val deltaY = ev.rawY - lastDownY
+                if (abs(deltaX) > abs(deltaY)) {
+                    // 横向滑动，拦截事件，自己处理
+                    return true
+                }
+            }
+        }
+        return super.onInterceptTouchEvent(ev)
     }
 
     @SuppressLint("ClickableViewAccessibility")

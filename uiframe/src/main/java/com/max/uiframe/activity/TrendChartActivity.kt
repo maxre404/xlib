@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.max.uiframe.R
+import com.max.uiframe.adapter.SampleAdapter
 import com.max.uiframe.widget.BottomTipsView
 import com.max.uiframe.widget.OneMWinGoTrendChartView
 
@@ -23,6 +26,15 @@ class TrendChartActivity : AppCompatActivity() {
         findViewById<View>(R.id.btnShow).setOnClickListener {
             bottomTipsView.showTips()
         }
+        val recyclerView = findViewById<RecyclerView>(R.id.rvItem)
+       val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+        val data: MutableList<String> = ArrayList()
+        for (i in 1..100) {
+            data.add("Item $i")
+        }
 
+        val adapter = SampleAdapter(data)
+        recyclerView.adapter = adapter
     }
 }
