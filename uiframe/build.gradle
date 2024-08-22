@@ -66,6 +66,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.github.liangjingkanji:spannable:1.2.0'
     implementation project(path: ':xlib')
+    implementation 'com.github.liangjingkanji:BRV:1.6.0'
 //    implementation 'com.github.liangjingkanji:Net:3.4.14'
 
 

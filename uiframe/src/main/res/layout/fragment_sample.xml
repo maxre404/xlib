@@ -4,37 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:background="@color/teal_200"
-            android:textColor="@color/white"
-            android:text="走势图"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_weight="1"
-
-            android:background="@color/teal_200"
-            android:textColor="@color/white"
-            android:text="开奖号码"
-            />
-
-    </LinearLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:padding="16dp"
         android:scrollbars="none"
         />
 
