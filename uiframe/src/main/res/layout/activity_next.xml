@@ -7,7 +7,7 @@
     <data>
         <variable
             name="config"
-            type="com.max.uiframe.data.OnToWinGameConfig" />
+            type="com.ok.uiframe.data.OnToWinGameConfig" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/splash">
 
-        <com.max.uiframe.widget.TreasureSnatchProgressBar
+        <com.ok.uiframe.widget.TreasureSnatchProgressBar
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             app:oneToWinGoldSrc="@drawable/ic_amount_gold"
             android:visibility="visible" />
 
-        <com.max.uiframe.OneToWinLayout
+        <com.ok.uiframe.OneToWinLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

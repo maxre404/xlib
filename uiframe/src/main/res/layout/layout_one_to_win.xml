@@ -26,7 +26,7 @@
 
         </FrameLayout>
 
-        <com.max.uiframe.widget.TreasureSnatchProgressBar
+        <com.ok.uiframe.widget.TreasureSnatchProgressBar
             android:id="@+id/treasureSnatchProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

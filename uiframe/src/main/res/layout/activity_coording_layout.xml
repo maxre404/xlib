@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity">
+    tools:context="com.ok.uiframe.MainActivity">
 
     <!-- AppBarLayout 包含 Toolbar 和 TabLayout -->
     <com.google.android.material.appbar.AppBarLayout
@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         >
         <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:background="@color/purple_200"
             app:layout_scrollFlags="scroll"
             >
             <TextView
+                android:id="@+id/tvLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"

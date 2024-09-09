@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstFragment">
+    tools:context="com.ok.uiframe.FirstFragment">
 
     <TextView
         android:id="@+id/textview_first"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"
             />
-        <com.max.uiframe.widget.TrimTextView
+        <com.ok.uiframe.widget.TrimTextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

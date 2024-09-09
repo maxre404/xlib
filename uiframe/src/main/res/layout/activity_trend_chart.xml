@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".activity.TrendChartActivity">
+    tools:context="com.ok.uiframe.activity.TrendChartActivity">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_300"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-            <com.max.uiframe.widget.OneMWinGoTrendChartView
+            <com.ok.uiframe.widget.OneMWinGoTrendChartView
                 android:id="@+id/oneWinGoTrendChartView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.max.uiframe.widget.FloatingGiftView
+    <com.ok.uiframe.widget.FloatingGiftView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +46,7 @@
         android:visibility="gone"
         />
 
-    <com.max.uiframe.widget.DraggableView
+    <com.ok.uiframe.widget.DraggableView
         android:layout_width="@dimen/dp_180"
         android:layout_height="@dimen/dp_260"
         app:layout_constraintTop_toTopOf="parent"
@@ -63,9 +63,9 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-    </com.max.uiframe.widget.DraggableView>
+    </com.ok.uiframe.widget.DraggableView>
 
-    <com.max.uiframe.widget.BottomTipsView
+    <com.ok.uiframe.widget.BottomTipsView
         android:id="@+id/bottomTipsView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

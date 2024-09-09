@@ -12,11 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Xlib">
         <activity
-            android:name=".activity.TrendChartActivity"
+            android:name="com.ok.uiframe.activity.TrendChartActivity"
             android:exported="true"
             >
         </activity>
-        <activity android:name=".activity.CoordinatorLayoutActivity"
+        <activity android:name="com.ok.uiframe.activity.CoordinatorLayoutActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -26,12 +26,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.RecyclerViewAnimationActivity"
+            android:name="com.ok.uiframe.activity.RecyclerViewAnimationActivity"
             android:exported="true"
             >
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.ok.uiframe.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Xlib.NoActionBar">
@@ -40,11 +40,11 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".NextActivity"
+            android:name="com.ok.uiframe.NextActivity"
             android:exported="true">
         </activity>
         <activity
-            android:name=".MultiProcessActivity"
+            android:name="com.ok.uiframe.MultiProcessActivity"
             android:launchMode="singleTop"
             android:process=":remote" />
     </application>
