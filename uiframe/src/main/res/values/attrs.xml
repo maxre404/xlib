@@ -2,15 +2,19 @@
 <resources>
     <declare-styleable name="TreasureSnatchProgressBar">
         <!--失败方块宽度-->
-        <attr name="failBlockWidth" format="dimension"/>
+        <attr name="failBlockWidth" format="dimension" />
         <!--游标高度-->
-        <attr name="failBlockHeight" format="dimension"/>
+        <attr name="failBlockHeight" format="dimension" />
         <!--游标文字大小-->
-        <attr name="cursorTextSize" format="dimension"/>
+        <attr name="cursorTextSize" format="dimension" />
         <!--指示器图片  -->
-        <attr name="indicatorSrc" format="reference"/>
+        <attr name="indicatorSrc" format="reference" />
         <!--当前金额文本大小-->
-        <attr name="currentAmountTextSize" format="dimension"/>
-        <attr name="oneToWinGoldSrc" format="reference"/>
+        <attr name="currentAmountTextSize" format="dimension" />
+        <attr name="oneToWinGoldSrc" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="FullscreenAttrs">
+        <attr name="fullscreenBackgroundColor" format="color" />
+        <attr name="fullscreenTextColor" format="color" />
     </declare-styleable>
 </resources>
