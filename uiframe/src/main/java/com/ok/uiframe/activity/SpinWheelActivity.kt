@@ -15,8 +15,7 @@ import com.max.uiframe.databinding.ActivitySpinWheelBinding
 import com.max.uiframe.R
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * 幸运旋转转盘页面
  */
 class SpinWheelActivity : AppCompatActivity() {
 
@@ -31,9 +30,6 @@ class SpinWheelActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= 30) {
             fullscreenContent.windowInsetsController?.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
         } else {
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             fullscreenContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
                         View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -90,7 +86,7 @@ class SpinWheelActivity : AppCompatActivity() {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        binding.dummyButton.setOnTouchListener(delayHideTouchListener)
+//        binding.dummyButton.setOnTouchListener(delayHideTouchListener)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
