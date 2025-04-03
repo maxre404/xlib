@@ -59,7 +59,7 @@ public class PieChartView extends View {
             float textCenterY = centerY + textRadius * (float) Math.sin(angleRad);
 
             // 计算文本最大宽度
-            int textMaxWidth = (int) (radius * 0.5f);
+            int textMaxWidth = (int) (radius * 0.6f);
 
             // **使用 StaticLayout 控制最大 2 行 + 省略号**
             StaticLayout staticLayout = StaticLayout.Builder.obtain(dataList[i], 0, dataList[i].length(), paintText, textMaxWidth)
