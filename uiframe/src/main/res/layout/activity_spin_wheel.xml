@@ -54,6 +54,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.ok.uiframe.widget.PieChartView
+            android:layout_width="@dimen/dp_261"
+            android:layout_height="@dimen/dp_261"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutSpin"
             android:layout_width="@dimen/dp_261"
@@ -64,6 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:padding="@dimen/dp_20"
             android:background="@mipmap/img_spin_outlet"
+            android:visibility="gone"
             >
         <com.ok.uiframe.widget.SpinWheel
             android:id="@+id/spinView"
