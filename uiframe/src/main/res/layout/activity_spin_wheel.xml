@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:theme="@style/ThemeOverlay.Xlib.FullscreenContainer"
     tools:context="com.ok.uiframe.activity.SpinWheelActivity">
@@ -18,14 +19,17 @@
         android:text="@string/dummy_content"
         android:textColor="?attr/fullscreenTextColor"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
+
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
@@ -46,5 +50,53 @@
 
         </LinearLayout>
     </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutSpin"
+            android:layout_width="@dimen/dp_261"
+            android:layout_height="@dimen/dp_261"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="@dimen/dp_20"
+            android:background="@mipmap/img_spin_outlet"
+            >
+        <com.ok.uiframe.widget.SpinWheel
+            android:id="@+id/spinView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+            <ImageView
+                android:layout_width="@dimen/dp_100"
+                android:layout_height="@dimen/dp_100"
+                android:src="@mipmap/img_spin_wheel_point"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutSpin"
+            android:layout_marginTop="10dp"
+            android:text="开始"
+            />
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

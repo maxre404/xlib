@@ -83,10 +83,14 @@ class SpinWheelActivity : AppCompatActivity() {
 
         fullscreenContentControls = binding.fullscreenContentControls
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-//        binding.dummyButton.setOnTouchListener(delayHideTouchListener)
+        initEvent()
+    }
+
+    private fun initEvent() {
+        binding.btnStart.setOnClickListener {
+            val list = listOf(720,720+45,720+90,720+135,720+180)
+            binding.spinView.toSpin(list.random().toFloat())
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
