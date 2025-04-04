@@ -12,7 +12,8 @@ import android.view.WindowInsets
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.max.uiframe.databinding.ActivitySpinWheelBinding
-import com.max.uiframe.R
+import com.max.xlib.log.LogFile
+import java.util.Random
 
 /**
  * 幸运旋转转盘页面
@@ -88,8 +89,12 @@ class SpinWheelActivity : AppCompatActivity() {
 
     private fun initEvent() {
         binding.btnStart.setOnClickListener {
-            val list = listOf(720,720+45,720+90,720+135,720+180)
-            binding.spinView.toSpin(list.random().toFloat())
+           val wheelList = binding.spinView.getWheelList()
+           val index = Random().nextInt(wheelList.size)
+            val sweepAngle = 360f / wheelList.size
+            val targetAngel = 360 -(index*sweepAngle)
+            //720专门用来转圈的 可以忽略
+            binding.spinView.toSpinAnimation(720+targetAngel)
         }
     }
 

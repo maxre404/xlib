@@ -193,8 +193,11 @@ class SpinWheel : View {
             canvas.restore()
         }
     }
+    public fun getWheelList():ArrayList<SpinWheelItem>{
+        return dataList
+    }
 
-    fun toSpin(degree: Float) {
+    fun toSpinAnimation(degree: Float) {
         rotation = 0f;
         animate().rotation(degree)
             .setDuration(2000)
@@ -203,6 +206,14 @@ class SpinWheel : View {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     LogFile.log("动画执行完毕")
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    super.onAnimationCancel(animation)
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
                 }
             })
             .start()
