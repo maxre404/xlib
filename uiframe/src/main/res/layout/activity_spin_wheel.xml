@@ -59,6 +59,7 @@
             android:layout_height="@dimen/dp_261"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
             />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutSpin"
@@ -70,7 +71,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:padding="@dimen/dp_20"
             android:background="@mipmap/img_spin_outlet"
-            android:visibility="gone"
+            android:visibility="visible"
             >
         <com.ok.uiframe.widget.SpinWheel
             android:id="@+id/spinView"

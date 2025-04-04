@@ -1,7 +1,6 @@
 package com.ok.uiframe.widget
 
 import android.animation.Animator
-import android.animation.Animator.AnimatorListener
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +8,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.DecelerateInterpolator
@@ -24,12 +27,14 @@ class SpinWheel : View {
     private var wheelHeight = 0
     private val dataList = ArrayList<SpinWheelItem>()
     private var paintFill: Paint? = null
-
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, null) // 关闭硬件加速，保证阴影生效
+    }
     // 边框画笔
     private var paintStroke: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        color = Color.parseColor("#C4A14F")
-        strokeWidth = 10f
+        color = Color.parseColor("#c2b07e") // 圆圈颜色
+        style = Paint.Style.STROKE // 填充模式
+        setShadowLayer(10f, 0f, 0f, Color.argb(100, 0, 0, 0)) // 设置阴影
     }
     private var paintLine: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
@@ -39,7 +44,7 @@ class SpinWheel : View {
     private var rectF: RectF? = null
     private var radius = 0f
     private val sectorCount = 8 // 扇形数量
-    private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val paintText = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FE2C55")
         textAlign = Paint.Align.CENTER
     }
@@ -73,7 +78,7 @@ class SpinWheel : View {
         paintText.textSize = context.resources.getDimensionPixelSize(R.dimen.sp_11).toFloat()
         dataList.clear()
         dataList.add(SpinWheelItem().apply {
-            content = "真心话1"
+            content = "真心话1这是哪里哦哈卡"
         })
         dataList.add(SpinWheelItem().apply {
             content = "大冒险"
@@ -135,25 +140,41 @@ class SpinWheel : View {
                 }
                 // 计算扇形中心点
                 val angleRad = Math.toRadians((startAngle + sweepAngle / 2).toDouble())
-                val textCenterX = centerX + radius * 0.5f * cos(angleRad).toFloat()
-                val textCenterY = centerY + radius * 0.5f * sin(angleRad).toFloat()
-                // 计算文字绘制起点
-                val text = dataList[i].content
-                val textWidth = paintText.measureText(text)
+                val textCenterX = centerX + radius * 0.4f * cos(angleRad).toFloat()
+                val textCenterY = centerY + radius * 0.4f * sin(angleRad).toFloat()
 
 
-                // 计算文字垂直方向的偏移量，使其垂直居中
-                val fontMetrics: Paint.FontMetrics = paintText.getFontMetrics()
-                val textVerticalOffset =
-                    (fontMetrics.descent - fontMetrics.ascent) / 2 - fontMetrics.descent
-                val textStartX = textCenterX - textWidth / 2
-                val textStartY = textCenterY + textVerticalOffset
+                // 计算文本最大宽度
+                val textMaxWidth = (radius * 0.58f).toInt()
+
+
+                // **使用 StaticLayout 控制最大 2 行 + 省略号**
+                val staticLayout = StaticLayout.Builder.obtain(dataList[i].content, 0, dataList[i].content.length, paintText,
+                    textMaxWidth
+                )
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .setMaxLines(2) // 限制最多 2 行
+                    .setEllipsize(TextUtils.TruncateAt.END) // 超过 2 行时才省略
+                    .setLineSpacing(0f, 1f)
+                    .setIncludePad(false)
+                    .build()
+
+
+                // 计算文本高度
+                val textHeight = staticLayout.height.toFloat()
+
+
+                // 计算起始位置，使文本居中
+                val textStartX = textCenterX - textMaxWidth / 2f
+                val textStartY = textCenterY - textHeight / 2f
+
                 canvas.save()
-                // 旋转 + 绘制文字
-                canvas.rotate(startAngle - 180 + sweepAngle / 2, textCenterX, textCenterY)
-                canvas.drawText(text, textStartX, textStartY, paintText)
-                canvas.restore()
 
+                // 旋转文本，使其与扇形对齐
+                canvas.rotate(startAngle + sweepAngle / 2-180, textCenterX, textCenterY)
+                canvas.translate(textStartX, textStartY)
+                staticLayout.draw(canvas)
+                canvas.restore()
                 startAngle += sweepAngle
             }
 
