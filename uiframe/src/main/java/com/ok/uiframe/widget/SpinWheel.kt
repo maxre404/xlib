@@ -186,10 +186,8 @@ class SpinWheel : View {
                 canvas.drawLine(centerX, centerY, endX, endY, paintLine!!)
                 startAngle += sweepAngle
             }
-
-            // 2️⃣ 画金色边框
+            // 画金色边框
 //            canvas.drawCircle(centerX, centerY, radius, paintStroke)
-
             canvas.restore()
         }
     }
