@@ -12,7 +12,6 @@ import android.view.WindowInsets
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.max.uiframe.databinding.ActivitySpinWheelBinding
-import com.max.xlib.log.LogFile
 import java.util.Random
 
 /**

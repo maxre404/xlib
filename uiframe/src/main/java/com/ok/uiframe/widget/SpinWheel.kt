@@ -122,7 +122,7 @@ class SpinWheel : View {
         if (dataList.isNotEmpty()) {
             val centerX = wheelWidth / 2f
             val centerY = wheelHeight / 2f
-            radius = (Math.min(centerX, centerY) - 20)
+            radius = (Math.min(centerX, centerY))
 
             rectF = RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius)
             val sweepAngle = 360f / dataList.size
@@ -188,7 +188,7 @@ class SpinWheel : View {
             }
 
             // 2️⃣ 画金色边框
-            canvas.drawCircle(centerX, centerY, radius, paintStroke)
+//            canvas.drawCircle(centerX, centerY, radius, paintStroke)
 
             canvas.restore()
         }
