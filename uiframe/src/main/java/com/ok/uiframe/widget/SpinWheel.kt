@@ -26,7 +26,7 @@ class SpinWheel : View {
     private var wheelWidth = 0
     private var wheelHeight = 0
     private val dataList = ArrayList<SpinWheelItem>()
-    private var paintFill: Paint? = null
+    private var arcPaint: Paint? = null //绘制扇形画笔
     init {
         setLayerType(LAYER_TYPE_SOFTWARE, null) // 关闭硬件加速，保证阴影生效
     }
@@ -49,6 +49,10 @@ class SpinWheel : View {
         textAlign = Paint.Align.CENTER
     }
 
+    private val color1 = Color.parseColor("#FFFBEF")
+    private val color2 = Color.parseColor("#FFF5DA")
+    private val color3 = Color.parseColor("#FFF2CD")
+
     constructor(context: Context) : super(context) {
         initView(context)
     }
@@ -64,16 +68,6 @@ class SpinWheel : View {
     ) {
         initView(context)
     }
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        initView(context)
-    }
-
     private fun initView(context: Context) {
         paintText.textSize = context.resources.getDimensionPixelSize(R.dimen.sp_11).toFloat()
         dataList.clear()
@@ -98,14 +92,14 @@ class SpinWheel : View {
         dataList.add(SpinWheelItem().apply {
             content = "真心话"
         })
-        dataList.add(SpinWheelItem().apply {
-            content = "叫老公"
-        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "叫老公"
+//        })
 
         // 填充扇形画笔
-        paintFill = Paint()
-        paintFill?.setStyle(Paint.Style.FILL)
-        paintFill?.setAntiAlias(true)
+        arcPaint = Paint()
+        arcPaint?.style = Paint.Style.FILL
+        arcPaint?.isAntiAlias = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -122,21 +116,20 @@ class SpinWheel : View {
         if (dataList.isNotEmpty()) {
             val centerX = wheelWidth / 2f
             val centerY = wheelHeight / 2f
-            radius = (Math.min(centerX, centerY))
+            radius = centerX.coerceAtMost(centerY)
+            if (null==rectF){
+                rectF = RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius)
+            }
 
-            rectF = RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius)
             val sweepAngle = 360f / dataList.size
-
-            val color1 = Color.parseColor("#FFF5DA") // 浅黄色
-            val color2 = Color.parseColor("#FFFBEF") // 乳白色
             canvas.save()
             canvas.rotate(270 - (sweepAngle) / 2, centerX, centerY)
-            // 1️⃣ 依次绘制 8 片扇形
+            // 依次绘制 扇形
             var startAngle = 0f
             for (i in 0 until dataList.size) {
-                paintFill?.color = if (i % 2 == 0) color1 else color2
+                arcPaint?.color = getColor(i)
                 rectF?.let {
-                    canvas.drawArc(it, startAngle, sweepAngle, true, paintFill!!)
+                    canvas.drawArc(it, startAngle, sweepAngle, true, arcPaint!!)
                 }
                 // 计算扇形中心点
                 val angleRad = Math.toRadians((startAngle + sweepAngle / 2).toDouble())
@@ -158,8 +151,6 @@ class SpinWheel : View {
                     .setLineSpacing(0f, 1f)
                     .setIncludePad(false)
                     .build()
-
-
                 // 计算文本高度
                 val textHeight = staticLayout.height.toFloat()
 
@@ -177,22 +168,49 @@ class SpinWheel : View {
                 canvas.restore()
                 startAngle += sweepAngle
             }
-
-            startAngle = 0f
-            for (i in 0 until sectorCount) {
-                val angleRad = Math.toRadians(startAngle.toDouble())
-                val endX = centerX + radius * cos(angleRad).toFloat()
-                val endY = centerY + radius * sin(angleRad).toFloat()
-                canvas.drawLine(centerX, centerY, endX, endY, paintLine!!)
-                startAngle += sweepAngle
-            }
-            // 画金色边框
-//            canvas.drawCircle(centerX, centerY, radius, paintStroke)
-            canvas.restore()
+            drawLineAndCircle(centerX, centerY, canvas, sweepAngle)
         }
+    }
+
+    //绘制扇形线条以及外圆
+    private fun drawLineAndCircle(
+        centerX: Float,
+        centerY: Float,
+        canvas: Canvas,
+        sweepAngle: Float
+    ) {
+        var startAngle = 0f
+        for (i in 0 until sectorCount) {
+            val angleRad = Math.toRadians(startAngle.toDouble())
+            val endX = centerX + radius * cos(angleRad).toFloat()
+            val endY = centerY + radius * sin(angleRad).toFloat()
+            canvas.drawLine(centerX, centerY, endX, endY, paintLine!!)
+            startAngle += sweepAngle
+        }
+        canvas.drawCircle(centerX, centerY, radius, paintStroke)
+        canvas.restore()
     }
     public fun getWheelList():ArrayList<SpinWheelItem>{
         return dataList
+    }
+
+    private fun getColor(index:Int):Int{
+//        偶数时双色交替：#FFFBEF / #FFF5DA
+//        奇数时三色循环交替：#FFFBEF / #FFF5DA / #FFF2CD（7个时，第七个为#FFF5DA）
+        return if (dataList.size % 2 == 0) {//扇形区域为偶数
+            if (index%2==0)color1 else color2
+        } else {//扇形个数为奇数
+            if (dataList.size == 7 && index == 6) {
+                color2
+            }else{
+                when(index%3){
+                    0-> color1
+                    1-> color2
+                    else-> color3
+                }
+            }
+
+        }
     }
 
     fun toSpinAnimation(degree: Float) {
