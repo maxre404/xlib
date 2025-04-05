@@ -79,9 +79,10 @@
             android:layout_height="match_parent"
             />
             <ImageView
+                android:id="@+id/imgStart"
                 android:layout_width="@dimen/dp_100"
                 android:layout_height="@dimen/dp_100"
-                android:src="@mipmap/img_spin_wheel_point"
+                android:src="@drawable/selector_spin_point"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

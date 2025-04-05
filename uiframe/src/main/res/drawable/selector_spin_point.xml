@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 不可点击状态 -->
+    <item android:drawable="@mipmap/img_spin_wheel_point_unable" android:state_enabled="false" />
+    <!-- 默认/可点击状态 -->
+    <item android:drawable="@mipmap/img_spin_wheel_point_enable" />
+
+
+</selector>
