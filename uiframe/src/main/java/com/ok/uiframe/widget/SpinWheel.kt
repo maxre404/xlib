@@ -77,21 +77,21 @@ class SpinWheel : View {
         dataList.add(SpinWheelItem().apply {
             content = "大冒险"
         })
-        dataList.add(SpinWheelItem().apply {
-            content = "叫老公"
-        })
-        dataList.add(SpinWheelItem().apply {
-            content = "112233"
-        })
-        dataList.add(SpinWheelItem().apply {
-            content = "测试"
-        })
-        dataList.add(SpinWheelItem().apply {
-            content = "大冒险"
-        })
-        dataList.add(SpinWheelItem().apply {
-            content = "真心话"
-        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "叫老公"
+//        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "112233"
+//        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "测试"
+//        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "大冒险"
+//        })
+//        dataList.add(SpinWheelItem().apply {
+//            content = "真心话"
+//        })
 //        dataList.add(SpinWheelItem().apply {
 //            content = "叫老公"
 //        })
@@ -131,10 +131,11 @@ class SpinWheel : View {
                 rectF?.let {
                     canvas.drawArc(it, startAngle, sweepAngle, true, arcPaint!!)
                 }
+
                 // 计算扇形中心点
                 val angleRad = Math.toRadians((startAngle + sweepAngle / 2).toDouble())
-                val textCenterX = centerX + radius * 0.4f * cos(angleRad).toFloat()
-                val textCenterY = centerY + radius * 0.4f * sin(angleRad).toFloat()
+                val textCenterX = if (dataList.size>2)centerX + radius * 0.4f * cos(angleRad).toFloat() else centerX + radius * 0.7f * cos(angleRad).toFloat()
+                val textCenterY = if (dataList.size>2)centerY + radius * 0.4f * sin(angleRad).toFloat() else centerY + radius * 0.7f * sin(angleRad).toFloat()
 
 
                 // 计算文本最大宽度
@@ -160,10 +161,14 @@ class SpinWheel : View {
                 val textStartY = textCenterY - textHeight / 2f
 
                 canvas.save()
-
-                // 旋转文本，使其与扇形对齐
-                canvas.rotate(startAngle + sweepAngle / 2-180, textCenterX, textCenterY)
-                canvas.translate(textStartX, textStartY)
+                if (dataList.size>2){
+                    canvas.rotate(startAngle + sweepAngle / 2-180, textCenterX, textCenterY)
+                    canvas.translate(textStartX, textStartY)
+                }else{
+                    // 旋转文本，使其与扇形对齐
+                    canvas.rotate(180f, textCenterX, textCenterY)
+                    canvas.translate(wheelWidth/2.0f, textStartY)
+                }
                 staticLayout.draw(canvas)
                 canvas.restore()
                 startAngle += sweepAngle
