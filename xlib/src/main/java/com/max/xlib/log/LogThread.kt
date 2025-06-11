@@ -1,6 +1,5 @@
 package com.max.xlib.log
 
-import android.util.Log
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,10 +20,10 @@ class LogThread : Thread() {
         }
         return this
     }
-    fun setMaxFileSize(size: Long): LogThread {
-        maxFileSize = size
-        return this
-    }
+//    fun setMaxFileSize(size: Long): LogThread {
+//        maxFileSize = size
+//        return this
+//    }
 
     private fun formatTime(millis: Long): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
