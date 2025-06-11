@@ -9,13 +9,16 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class LogThread : Thread() {
     private var logPath: File? = null
-    var maxFileSize:Long = 5 * 1024 * 1024 // 5MB
+    private var maxFileSize:Long = 5 * 1024 * 1024 // 5MB
 
     fun setLogPath(path: String?): LogThread {
         if (null==path){
             throw NullPointerException("path can't be null")
         }
-        logPath = File(path)
+        logPath = File(path,"app_logs")
+        if (logPath?.exists()==false){
+            logPath?.mkdirs()
+        }
         return this
     }
     fun setMaxFileSize(size: Long): LogThread {
@@ -55,12 +58,11 @@ class LogThread : Thread() {
         while (true) {
             try {
                 val logData = logQueue.take()
-                Log.d("debug11", "run 这里取出数据: $logData")
                 // 检查文件大小
                 if (currentLogFile.length() > maxFileSize) {
                     currentLogFile = getTodayLogFile()
                 }
-                currentLogFile.appendText("${formatTime(logData.time)}  ${logData.message} \n")
+                currentLogFile.appendText("${if (LogFile.isHideTme) "" else formatTime(logData.time)}  ${logData.message} \n")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -72,7 +74,9 @@ class LogThread : Thread() {
         private val logQueue = LinkedBlockingQueue<LogData>()
 
         fun log(message: String) {
-            logQueue.put(LogData(System.currentTimeMillis(), message))
+            if (logQueue.size<20){//防止未初始化 然后又调用了log 导致内存增多问题
+                logQueue.put(LogData(System.currentTimeMillis(), message))
+            }
         }
     }
 }

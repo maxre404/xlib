@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
                         Greeting("Android")
                         Spacer(modifier = Modifier.height(10.dp))
                         Button(onClick = {
+                            LogFile.log("this is test")
 //                            connectSocket()
                         }) {
                             Text(text = "连接socket")
