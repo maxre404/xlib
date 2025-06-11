@@ -9,6 +9,7 @@ import com.elvishew.xlog.flattener.ClassicFlattener
 import com.elvishew.xlog.printer.file.FilePrinter
 import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy
 import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator
+import java.io.File
 
 class LogFile {
 
@@ -17,14 +18,10 @@ class LogFile {
         private var isInited = false
         private const val TAG = "xlib"
         fun init(context: Context?) {
-//            val filePrinter = FilePrinter.Builder(context?.externalCacheDir!!.path) // 指定保存日志文件的路径
-//                .fileNameGenerator(DateFileNameGenerator()) // 指定日志文件名生成器，默认为 ChangelessFileNameGenerator("log")
-//                .cleanStrategy(FileLastModifiedCleanStrategy(1 * 7 * 24 * 60 * 60 * 1000)) // 指定日志文件清除策略，保存一周
-//                .flattener(ClassicFlattener())
-//                .build()
-//            val config = LogConfiguration.Builder().tag(TAG).build()
-//            XLog.init(config, filePrinter)
             LogThread().setLogPath(context?.externalCacheDir?.path).start()
+            val logDir = File(context?.externalCacheDir?.path, "crashLogs")
+            if (!logDir.exists()) logDir.mkdirs()
+            Thread.setDefaultUncaughtExceptionHandler(CrashHandler(logDir))
             isInited = true
         }
         fun log(message: String?) {
