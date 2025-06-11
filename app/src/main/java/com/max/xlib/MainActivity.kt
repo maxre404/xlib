@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            LogFile.init(this)
             XlibTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
                         Greeting("Android")
                         Spacer(modifier = Modifier.height(10.dp))
                         Button(onClick = {
+                            LogFile.log("这是++++++测试+++++")
 //                            connectSocket()
                         }) {
                             Text(text = "连接socket")
