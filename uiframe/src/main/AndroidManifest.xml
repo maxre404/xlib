@@ -17,15 +17,21 @@
             android:exported="true"
             android:label="@string/title_activity_spin_wheel"
             android:theme="@style/Theme.Xlib.Fullscreen">
+
+        </activity>
+        <activity android:name="com.ok.uiframe.activity.VideoTestActivity"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name="com.ok.uiframe.activity.TrendChartActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name="com.ok.uiframe.activity.CoordinatorLayoutActivity"
             android:exported="true">
@@ -37,7 +43,7 @@
         </activity>
         <activity
             android:name="com.ok.uiframe.activity.RecyclerViewAnimationActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name="com.ok.uiframe.MainActivity"
             android:exported="true"
@@ -49,7 +55,7 @@
         </activity>
         <activity
             android:name="com.ok.uiframe.NextActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name="com.ok.uiframe.MultiProcessActivity"
             android:launchMode="singleTop"

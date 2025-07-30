@@ -2,6 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <variable
+            name="m"
+            type="String" />
 
     </data>
 
@@ -9,13 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@color/light_blue_600"
+        >
 
         <TextView
             android:id="@+id/item_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item Text"
+            android:text="1111111111"
+            android:textColor="@color/black"
             android:textSize="18sp" />
     </LinearLayout>
 </layout>
