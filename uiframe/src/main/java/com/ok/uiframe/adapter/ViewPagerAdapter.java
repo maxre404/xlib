@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.ok.uiframe.fragment.SampleFragment;
 import com.ok.uiframe.fragment.SampleFragment;
+import com.ok.uiframe.fragment.VideoTestFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
@@ -17,11 +18,11 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return new SampleFragment();
+        return VideoTestFragment.Companion.getInstance(""+position);
     }
 
     @Override
     public int getItemCount() {
-        return 3; // 假设有三个页面
+        return 8; // 假设有三个页面
     }
 }
