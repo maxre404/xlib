@@ -102,6 +102,8 @@ public class FrameRootView extends FrameLayout implements IClearRootView {
             case MotionEvent.ACTION_MOVE:
                 if (isGreaterThanMinSize(mDownX, x) && isCanSrcoll) {
                     mIPositionCallBack.onPositionChange(getPositionChangeX(offsetX), 0);
+                    // 请求父控件不要拦截触摸事件，确保后续的MOVE事件可以被接收到
+                    getParent().requestDisallowInterceptTouchEvent(true);
                     return true;
                 }
                 break;
@@ -111,6 +113,8 @@ public class FrameRootView extends FrameLayout implements IClearRootView {
                     mDownX = getPositionChangeX(offsetX);
                     fixPostion(offsetX);
                     mEndAnimator.start();
+                    // 请求父控件不要拦截触摸事件，确保后续的MOVE事件可以被接收到
+                    getParent().requestDisallowInterceptTouchEvent(true);
                 }
                 break;
         }

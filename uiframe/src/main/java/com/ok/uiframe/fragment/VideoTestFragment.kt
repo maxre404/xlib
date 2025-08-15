@@ -1,19 +1,18 @@
 package com.ok.uiframe.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import com.max.uiframe.R
 import com.max.xlib.log.LogFile
-import com.ok.uiframe.widget.VideoControlLayout
+import com.ok.uiframe.widget.GestureSupportRecyclerView
+import com.ok.uiframe.widget.OnItemGestureListener
 import yellow5a5.clearscreenhelper.ClearScreenHelper
 import yellow5a5.clearscreenhelper.View.FrameRootView
 
@@ -33,7 +32,7 @@ class VideoTestFragment:Fragment() {
         val param = arguments?.getString("param")
         val button = view?.findViewById<Button>(R.id.button2)
         button?.text = "button:$param"
-        val rv = view?.findViewById<RecyclerView>(R.id.rv)
+        val rv = view?.findViewById<GestureSupportRecyclerView>(R.id.rv)
         val sampleClearRootLayout = view?.findViewById<FrameRootView>(R.id.sampleClearRootLayout)
         mClearScreenHelper = ClearScreenHelper(activity, sampleClearRootLayout)
         mClearScreenHelper?.bind(rv,button)
@@ -42,13 +41,41 @@ class VideoTestFragment:Fragment() {
             onBind {
                 val itemText = findView<TextView>(R.id.item_text)
                 itemText.text = getModel<CharSequence?>().toString()
+                val button = findView<Button>(R.id.button)
+                button.setOnClickListener {
+                    LogFile.log("这里有触发点击事件")
+                }
             }
         }?.models = listOf("1","2","3","4","5","6","7","8","9","10")
         view?.findViewById<View>(R.id.button2)?.setOnClickListener {
             LogFile.log("onCreate: 这里时button 的点击事件哦")
         }
-        val layoutVideo = view?.findViewById<VideoControlLayout>(R.id.layoutVideo)
-        layoutVideo?.exceptViewList(listOf(rv!!,sampleClearRootLayout!!))
+        rv?.setOnItemGestureListener(object :OnItemGestureListener{
+            override fun onSingleClick(view: View?, position: Int) {
+               LogFile.log("单击")
+            }
+
+            override fun onDoubleClick(view: View?, position: Int) {
+                LogFile.log("双击")
+            }
+
+            override fun onItemLongPressLeft(view: View?, position: Int) {
+                LogFile.log("长按左边")
+            }
+
+            override fun onItemLongPressRight(view: View?, position: Int) {
+                LogFile.log("长按右边")
+            }
+
+            override fun onItemLongPressLeftUp(view: View?, position: Int) {
+                LogFile.log("长按左边结束")
+            }
+
+            override fun onItemLongPressRightUp(view: View?, position: Int) {
+                LogFile.log("长按右边结束")
+            }
+
+        })
 //        layoutVideo?.exceptViewList(listOf(rv!!))
 
     }

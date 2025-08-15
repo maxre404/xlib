@@ -25,7 +25,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/rv" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.ok.uiframe.widget.GestureSupportRecyclerView
                 android:id="@+id/rv"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_300"
@@ -36,5 +36,7 @@
     <com.ok.uiframe.widget.VideoControlLayout
         android:id="@+id/layoutVideo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
