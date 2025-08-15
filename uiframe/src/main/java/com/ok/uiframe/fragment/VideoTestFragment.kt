@@ -14,9 +14,11 @@ import com.drake.brv.utils.setup
 import com.max.uiframe.R
 import com.max.xlib.log.LogFile
 import com.ok.uiframe.widget.VideoControlLayout
+import yellow5a5.clearscreenhelper.ClearScreenHelper
+import yellow5a5.clearscreenhelper.View.FrameRootView
 
 class VideoTestFragment:Fragment() {
-
+    var mClearScreenHelper: ClearScreenHelper? = null //屏幕控制器
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,6 +34,9 @@ class VideoTestFragment:Fragment() {
         val button = view?.findViewById<Button>(R.id.button2)
         button?.text = "button:$param"
         val rv = view?.findViewById<RecyclerView>(R.id.rv)
+        val sampleClearRootLayout = view?.findViewById<FrameRootView>(R.id.sampleClearRootLayout)
+        mClearScreenHelper = ClearScreenHelper(activity, sampleClearRootLayout)
+        mClearScreenHelper?.bind(rv,button)
         rv?.linear()?.setup {
             addType<String>(R.layout.item_view)
             onBind {
@@ -43,7 +48,8 @@ class VideoTestFragment:Fragment() {
             LogFile.log("onCreate: 这里时button 的点击事件哦")
         }
         val layoutVideo = view?.findViewById<VideoControlLayout>(R.id.layoutVideo)
-        layoutVideo?.exceptViewList(listOf(rv!!))
+        layoutVideo?.exceptViewList(listOf(rv!!,sampleClearRootLayout!!))
+//        layoutVideo?.exceptViewList(listOf(rv!!))
 
     }
 

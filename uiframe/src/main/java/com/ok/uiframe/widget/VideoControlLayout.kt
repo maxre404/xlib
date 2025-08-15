@@ -12,6 +12,7 @@ import android.view.ViewConfiguration
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GestureDetectorCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.max.uiframe.R
 import com.max.xlib.log.LogFile
 import kotlin.math.abs
@@ -101,17 +102,60 @@ class VideoControlLayout : ConstraintLayout {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        event?.let {
-            gestureDetector.onTouchEvent(event)
-            mViewList.forEach { view ->
-                val isInSide = isTouchInsideView(view, event)
-                if (isInSide && view.visibility == View.VISIBLE) {
-                    view.dispatchTouchEvent(event)
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = ev.x
+                downY = ev.y
+                // 告诉父 View 先别拦截，等我判断清楚再说
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dx = ev.x - downX
+                val dy = ev.y - downY
+                if (abs(dy) > abs(dx) && abs(dy) > touchSlop) {
+                    // 是纵向滑动 → 允许父 View 拦截
+                    var disallowIntercept = false
+                    mViewList.forEach { view ->
+                        val isInSide = isTouchInsideView(view, ev)
+                        if (isInSide && view.visibility == View.VISIBLE && view is RecyclerView) {
+                            disallowIntercept = true
+                        }
+                    }
+                    Log.d(TAG, "ACTION_MOVE:++++++:$disallowIntercept")
+                    parent.requestDisallowInterceptTouchEvent(disallowIntercept)
+                } else if (abs(dx) > abs(dy) && abs(dx) > touchSlop) {
+                    // 横向滑动 → 禁止父 View 拦截
+                    parent.requestDisallowInterceptTouchEvent(true)
                 }
             }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        event.let {
+            gestureDetector.onTouchEvent(event)
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    downY = event.y
+                    // 告诉父 View 先别拦截，等我判断清楚再说
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = event.x - downX
+                    val dy = event.y - downY
+                }
+            }
+//            mViewList.forEach { view ->
+//                val isInSide = isTouchInsideView(view, event)
+//                if (isInSide && view.visibility == View.VISIBLE) {
+//                    view.dispatchTouchEvent(event)
+//                }
+//            }
         }
 
         return true
