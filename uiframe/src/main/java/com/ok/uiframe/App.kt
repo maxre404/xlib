@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.ok.uiframe.classloader.CustomDexClassLoader
+import com.ok.uiframe.widget.BannerManager
 import dalvik.system.BaseDexClassLoader
 import dalvik.system.DexClassLoader
 import java.io.File
@@ -35,9 +36,9 @@ class App : Application() {
         // 假设插件已下载完成
 //        thread {
         Log.d("debug11", "这里多线程进行处理 doReplace: ")
-        injectDex(apkFile.absolutePath)
+//        injectDex(apkFile.absolutePath)
 //        }
-        replaceClassLoader(this.classLoader)
+//        replaceClassLoader(this.classLoader)
 
     }
     fun injectDex(apkPath: String) {
@@ -140,5 +141,15 @@ class App : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        mContext = this
+        BannerManager.init()
+    }
+    companion object {
+        private var mContext: App? = null
+        fun getInstance(): App? {
+            return mContext
+        }
+
+
     }
 }

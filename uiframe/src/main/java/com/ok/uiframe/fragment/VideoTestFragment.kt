@@ -11,6 +11,8 @@ import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import com.max.uiframe.R
 import com.max.xlib.log.LogFile
+import com.ok.uiframe.data.BannerMessage
+import com.ok.uiframe.widget.BannerManager
 import com.ok.uiframe.widget.GestureSupportRecyclerView
 import com.ok.uiframe.widget.OnItemGestureListener
 import yellow5a5.clearscreenhelper.ClearScreenHelper
@@ -49,6 +51,7 @@ class VideoTestFragment:Fragment() {
         }?.models = listOf("1","2","3","4","5","6","7","8","9","10")
         view?.findViewById<View>(R.id.button2)?.setOnClickListener {
             LogFile.log("onCreate: 这里时button 的点击事件哦")
+            BannerManager.show(activity!!,BannerMessage("今天签到领100金币", 3000))
         }
         rv?.setOnItemGestureListener(object :OnItemGestureListener{
             override fun onSingleClick(view: View?, position: Int) {

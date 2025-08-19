@@ -17,6 +17,11 @@
         <item name="windowNoTitle">true</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
     <style name="Theme.Xlib.NoActionBar">
         <item name="windowActionBar">false</item>
