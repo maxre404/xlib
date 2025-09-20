@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         />
-    <com.ok.uiframe.widget.LiveStreamingView
+    <com.ok.uiframe.widget.LiveStreamingAnimationView
         android:layout_width="@dimen/dp_15"
         android:layout_height="@dimen/dp_15"
         app:layout_constraintTop_toTopOf="parent"

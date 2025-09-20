@@ -10,7 +10,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 
 /** 正在直播中的动画view */
-class LiveStreamingView @JvmOverloads constructor(
+class LiveStreamingAnimationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
