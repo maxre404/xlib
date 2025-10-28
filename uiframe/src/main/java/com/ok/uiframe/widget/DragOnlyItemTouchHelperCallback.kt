@@ -12,62 +12,71 @@ import java.util.Collections
 class DragOnlyItemTouchHelperCallback<T>(
     private val adapter: T
 ) : ItemTouchHelper.Callback() where T : RecyclerView.Adapter<*>, T : ItemMoveAdapter {
-    // T 必须是 RecyclerView.Adapter 并且实现 ItemMoveAdapter 接口
+    // 判断该位置的 item 是否可拖动
+    private fun isPositionDraggable(position: Int): Boolean {
+        // 示例：前两个禁止拖动
+        return position < 6
+    }
 
-    /**
-     * 【核心 1】确定支持的动作：只支持上下拖动
-     */
     override fun getMovementFlags(
-        recyclerView: RecyclerView, 
+        recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        // 允许上下左右拖动
-        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
-                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        val position = viewHolder.bindingAdapterPosition
+        if (position == RecyclerView.NO_POSITION) {
+            return makeMovementFlags(0, 0)
+        }
 
-        // 不允许任何滑动操作 (SWIPE)
-        val swipeFlags = 0
-        return makeMovementFlags(dragFlags, swipeFlags)
+        // 如果该位置不可拖动，禁用所有拖拽动作
+        return if (isPositionDraggable(position)) {
+            val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
+                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            makeMovementFlags(dragFlags, 0)
+        } else {
+            makeMovementFlags(0, 0)
+        }
     }
 
     /**
-     * 【核心 2】处理拖动移动事件
+     * 核心：处理拖动事件
      */
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        // 调用 Adapter 接口方法来执行数据交换和界面更新
-        adapter.onItemMove(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
-        return true // 返回 true 表示移动成功
+        val fromPos = viewHolder.bindingAdapterPosition
+        val toPos = target.bindingAdapterPosition
+
+        // 如果目标位置是不可拖动的，就不允许移动
+        if (!isPositionDraggable(toPos)) {
+            // 返回 false 告诉系统“我没移动”，系统会自动恢复原位（回弹）
+            return false
+        }
+
+        // 如果自己就是禁止拖动项，也不处理
+        if (!isPositionDraggable(fromPos)) {
+            return false
+        }
+
+        // 执行真正的交换逻辑
+        adapter.onItemMove(fromPos, toPos)
+        return true
     }
 
-    /**
-     * 【核心 3】处理滑动事件：返回空，因为我们只需要拖动
-     */
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        // 不做任何处理
+        // 不处理滑动
     }
 
-    /**
-     * 可选：定义拖动交互的自定义效果
-     */
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-        // 在拖动开始时
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-            // 示例：改变拖动中的 Item 的背景颜色，让用户知道它正在被选中
-            viewHolder?.itemView?.alpha = 0.8f 
+            viewHolder?.itemView?.alpha = 0.8f
         }
         super.onSelectedChanged(viewHolder, actionState)
     }
 
-    /**
-     * 可选：拖动结束后恢复效果
-     */
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
-        // 示例：恢复透明度
-        viewHolder.itemView.alpha = 1.0f 
+        viewHolder.itemView.alpha = 1.0f
     }
 }
