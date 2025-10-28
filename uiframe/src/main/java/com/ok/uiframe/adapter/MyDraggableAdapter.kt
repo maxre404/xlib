@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.max.uiframe.R
+import com.max.xlib.log.LogFile
 import java.util.Collections
 
 class MyDraggableAdapter(private val items: MutableList<String>) : 
@@ -30,11 +31,17 @@ class MyDraggableAdapter(private val items: MutableList<String>) :
      * 【实现 ItemMoveAdapter 接口】处理数据交换
      */
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        LogFile.log("fromPosition:$fromPosition  toPosition:$toPosition")
         // 1. 在数据集中交换位置
-        Collections.swap(items, fromPosition, toPosition)
-
+        // 1. 从原位置取出 Item (List.removeAt 会返回被移除的 Item)
+        val itemToMove = items.removeAt(fromPosition)
+        // 2. 将 Item 插入到新位置
+        // List.add(index, element) 会将元素插入到指定索引，并将该位置及之后的所有元素后移
+        items.add(toPosition, itemToMove)
+//        Collections.swap(items, fromPosition, toPosition)
         // 2. 通知 Adapter 刷新界面
         notifyItemMoved(fromPosition, toPosition)
+        LogFile.log("打印数组:$items")
     }
     
     // 内部类 MyViewHolder
