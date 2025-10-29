@@ -23,7 +23,7 @@ public class SampleAdapter extends RecyclerView.Adapter<SampleAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drag_photo_album, parent, false);
         return new ViewHolder(view);
     }
 

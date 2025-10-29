@@ -2,7 +2,6 @@ package com.ok.uiframe.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,12 +32,12 @@ class SampleFragment : Fragment() {
         }
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView?.linear()?.setup {
-            addType<String>(R.layout.item_view)
+            addType<String>(R.layout.item_drag_photo_album)
             addType<HoverHeaderModel>(R.layout.item_xuanfu)
             addType<Int>(R.layout.item_qushi)
             onBind {
                 when(itemViewType){
-                    R.layout.item_view ->{
+                    R.layout.item_drag_photo_album ->{
                         val binding = getBinding<ItemViewBinding>()
                         binding.itemText.text = "this is item:${modelPosition-2}"
                     }

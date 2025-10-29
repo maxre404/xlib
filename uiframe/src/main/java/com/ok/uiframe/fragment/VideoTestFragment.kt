@@ -39,7 +39,7 @@ class VideoTestFragment:Fragment() {
         mClearScreenHelper = ClearScreenHelper(activity, sampleClearRootLayout)
         mClearScreenHelper?.bind(rv,button)
         rv?.linear()?.setup {
-            addType<String>(R.layout.item_view)
+            addType<String>(R.layout.item_drag_photo_album)
             onBind {
                 val itemText = findView<TextView>(R.id.item_text)
                 itemText.text = getModel<CharSequence?>().toString()

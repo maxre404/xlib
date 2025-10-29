@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.ItemOrientation
@@ -21,8 +20,8 @@ import com.drake.brv.utils.grid
 import com.drake.brv.utils.setup
 import com.max.uiframe.R
 import com.max.xlib.log.LogFile
-import com.ok.uiframe.adapter.MyDraggableAdapter
-import com.ok.uiframe.data.DragData
+import com.ok.uiframe.adapter.AlbumDraggableAdapter
+import com.ok.uiframe.data.DraggablePhotoAlbumData
 import com.ok.uiframe.widget.DragOnlyItemTouchHelperCallback
 
 class DragFragment:Fragment(){
@@ -42,7 +41,7 @@ class DragFragment:Fragment(){
         val recyclerView = view?.findViewById<RecyclerView>(R.id.rvDrag)
 
         val data = mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8", "Item 9", "Item 10")
-        val adapter = MyDraggableAdapter(data)
+        val adapter = AlbumDraggableAdapter(data)
 
 // 【！！！关键步骤：安全配置 RecyclerView！！！】
         recyclerView?.let { rv ->
@@ -75,9 +74,9 @@ class DragFragment:Fragment(){
     @SuppressLint("ClickableViewAccessibility")
     fun  initDragView(view: View?){
         val recyclerView = view?.findViewById<RecyclerView>(R.id.rvDrag)
-        val data = mutableListOf(DragData("Item 1"),DragData("Item 2"),DragData("Item 3"),DragData("Item 4"),DragData("Item 5"),DragData("Item 6", ItemOrientation.NONE),DragData("Item 7", ItemOrientation.NONE),DragData("Item 8", ItemOrientation.NONE),DragData("Item 9", ItemOrientation.NONE),)
+        val data = mutableListOf(DraggablePhotoAlbumData("Item 1"),DraggablePhotoAlbumData("Item 2"),DraggablePhotoAlbumData("Item 3"),DraggablePhotoAlbumData("Item 4"),DraggablePhotoAlbumData("Item 5"),DraggablePhotoAlbumData("Item 6", ItemOrientation.NONE),DraggablePhotoAlbumData("Item 7", ItemOrientation.NONE),DraggablePhotoAlbumData("Item 8", ItemOrientation.NONE),DraggablePhotoAlbumData("Item 9", ItemOrientation.NONE),)
         recyclerView?.grid(4)?.setup {
-            addType<DragData>(R.layout.item_view)
+            addType<DraggablePhotoAlbumData>(R.layout.item_drag_photo_album)
             onCreate {
                 val layoutItem = findView<LinearLayout>(R.id.layoutItem)
                 layoutItem.setOnTouchListener { v, event ->
@@ -89,7 +88,7 @@ class DragFragment:Fragment(){
             }
             onBind {
                 val textView = findView<TextView>(R.id.item_text)
-                textView.text = getModel<DragData>().data
+                textView.text = getModel<DraggablePhotoAlbumData>().data
             }
             itemTouchHelper = ItemTouchHelper(object : DefaultItemTouchCallback() {
 
