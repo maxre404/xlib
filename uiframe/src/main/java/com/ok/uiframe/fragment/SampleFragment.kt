@@ -11,7 +11,6 @@ import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import com.max.uiframe.R
 import com.ok.uiframe.data.HoverHeaderModel
-import com.max.uiframe.databinding.ItemViewBinding
 
 class SampleFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
@@ -38,8 +37,8 @@ class SampleFragment : Fragment() {
             onBind {
                 when(itemViewType){
                     R.layout.item_drag_photo_album ->{
-                        val binding = getBinding<ItemViewBinding>()
-                        binding.itemText.text = "this is item:${modelPosition-2}"
+//                        val binding = getBinding<ItemViewBinding>()
+//                        binding.itemText.text = "this is item:${modelPosition-2}"
                     }
                 }
             }

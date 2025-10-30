@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.ok.uiframe.fragment.AlbumFragment;
 import com.ok.uiframe.fragment.DragFragment;
 import com.ok.uiframe.fragment.SampleFragment;
 import com.ok.uiframe.fragment.SampleFragment;
@@ -20,7 +21,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
 //        return VideoTestFragment.Companion.getInstance(""+position);
-        return new DragFragment();
+        return new AlbumFragment();
     }
 
     @Override
