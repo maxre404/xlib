@@ -2,6 +2,7 @@ package com.ok.uiframe.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import androidx.exifinterface.media.ExifInterface
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +18,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.drake.brv.PageRefreshLayout
 import com.drake.brv.utils.grid
 import com.drake.brv.utils.setup
 import com.max.uiframe.R
@@ -26,6 +30,7 @@ import com.ok.uiframe.OnPermissionRequestCallBack
 import com.ok.uiframe.data.AlbumData
 import com.ok.uiframe.util.PermissionManager
 import com.ok.uiframe.util.PermissionManager.requestPermission
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Random
 import kotlin.math.abs
@@ -34,7 +39,10 @@ import kotlin.math.abs
 class AlbumFragment: Fragment() {
 
     private val permissionRuestMap: HashMap<Int, OnPermissionRequestCallBack> = HashMap() //请求权限时候 保存回调与requestCode
-
+    private val TAG = "debug11"
+    var pageIndex = 1
+    private var pageLimit = 50
+    var albumList = mutableListOf<AlbumData>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,24 +55,25 @@ class AlbumFragment: Fragment() {
         return view
     }
     var tvName:TextView?=null
-    @SuppressLint("CheckResult", "SetTextI18n")
+    @SuppressLint("CheckResult", "SetTextI18n", "NotifyDataSetChanged")
     private fun initView(view: View?) {
         val recyclerView = view?.findViewById<RecyclerView>(R.id.rvPhoto)
         val btnRead = view?.findViewById<Button>(R.id.btnRead)
         btnRead?.setOnClickListener {
-            val list = getRecentImageUris(activity!!,1000)
-            LogFile.log("打印list:$list")
-            val test = getAllAlbumNames(activity!!)
-            tvName?.text = "所有相册集合:$test"
-            LogFile.log("打印所有相册名称:$test")
+//            val list = getRecentImageUris(activity!!,1000)
+//            LogFile.log("打印list:$list")
+//            val test = getAllAlbumNames(activity!!)
+//            tvName?.text = "所有相册集合:$test"
+//            LogFile.log("打印所有相册名称:$test")
         }
         view?.findViewById<Button>(R.id.button4)?.setOnClickListener {
             applayPermission()
         }
         tvName = view?.findViewById<TextView>(R.id.tvName)
-        val list = getFavoriteImageUris(activity!!,10*10000000)
-        val newList = list.map { uri->
+        val list = getImageUrisPaged(activity!!,pageIndex,pageLimit)
+        list.map { uri->
             AlbumData(data = uri)
+            albumList.add(AlbumData(data = uri))
         }
         recyclerView?.grid(4)?.setup {
             addType<AlbumData>(R.layout.item_photo_album)
@@ -73,7 +82,25 @@ class AlbumFragment: Fragment() {
                val image =  findView<ImageView>(R.id.image)
                 Glide.with(activity!!).load(model.data).into(image)
             }
-        }?.models = newList
+        }?.models = albumList
+        val page = view?.findViewById<PageRefreshLayout>(R.id.page)
+        page?.setEnableLoadMore(true)
+        page?.onRefresh {
+            Log.d(TAG, "initView: 下啦刷新")
+        }
+        page?.onLoadMore {
+            pageIndex += 1
+            Log.d(TAG, "加载更多 pageIndex:$pageIndex")
+            val newList = getImageUrisPaged(activity!!,pageIndex,pageLimit).map { uri->
+                AlbumData(data = uri)
+            }
+            Log.d(TAG, "新的list:  $newList")
+            albumList.addAll(newList)
+            recyclerView?.adapter?.notifyDataSetChanged()
+            page.finishLoadMore()
+
+
+        }
     }
     @SuppressLint("Range")
     fun getFrontCameraImageUris(context: Context, limit: Int = 100): List<Uri> {
@@ -253,43 +280,57 @@ class AlbumFragment: Fragment() {
 
 
     @SuppressLint("Range")
-    fun getRecentImageUris(context: Context, limit: Int = 100): List<Uri> {
+    fun getImageUrisPaged(
+        context: Context,
+        page: Int,
+        pageSize: Int
+    ): List<Uri> {
         val imageUris = mutableListOf<Uri>()
-
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-//            MediaStore.Images.Media.DATE_ADDED
-            MediaStore.Images.Media.DATE_ADDED
-        )
-
-        // Android 11+ 支持用 Bundle 传排序与限制
+        // 排序规则
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
-        val cursor = context.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            null,   // selection
-            null,   // selectionArgs
-            sortOrder
-        )
+        // 分页参数
+        val offset = (page - 1) * pageSize
+        val cursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // ✅ Android 11+ 可用 LIMIT & OFFSET
+            val queryArgs = Bundle().apply {
+                putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sortOrder)
+                putInt(ContentResolver.QUERY_ARG_LIMIT, pageSize)
+                putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
+            }
+
+            context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                arrayOf(MediaStore.Images.Media._ID),
+                queryArgs,
+                null
+            )
+        } else {
+            // ✅ Android <= 10 fallback（手动 OFFSET）
+            context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                arrayOf(MediaStore.Images.Media._ID),
+                null,
+                null,
+                "$sortOrder LIMIT $pageSize OFFSET $offset"
+            )
+        }
 
         cursor?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            var count = 0
-            while (it.moveToNext() && count < limit) {
-                val id = it.getLong(idColumn)
-                // 构造图片的 content:// URI
+            val columnId = it.getColumnIndex(MediaStore.Images.Media._ID)
+            while (it.moveToNext()) {
+                val id = it.getLong(columnId)
                 val uri = ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     id
                 )
                 imageUris.add(uri)
-                count++
             }
         }
 
         return imageUris
     }
+
     @SuppressLint("Range")
     fun getFavoriteImageUris(context: Context, limit: Int = 100): List<Uri> {
         val imageUris = mutableListOf<Uri>()

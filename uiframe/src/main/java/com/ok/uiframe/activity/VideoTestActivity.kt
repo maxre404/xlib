@@ -21,6 +21,7 @@ class VideoTestActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_test)
         val vp = findViewById<ViewPager2>(R.id.vp)
+        vp.isUserInputEnabled = false
         vp.adapter = ViewPagerAdapter(this)
 //        val rv = findViewById<RecyclerView>(R.id.rv)
 //        rv.linear().setup {
